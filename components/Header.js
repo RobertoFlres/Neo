@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import config from "@/config";
 import { useEffect, useState } from "react";
 
@@ -33,9 +34,12 @@ const Header = () => {
     >
       <nav className="max-w-7xl mx-auto px-6 md:px-8 py-4 flex items-center justify-center">
         <Link className="group" href="/" title={`${config.appName} homepage`}>
-          <img
+          <Image
             src="/logonuevo.svg"
             alt={config.appName}
+            width={140}
+            height={36}
+            priority
             className="h-9 w-auto group-hover:scale-105 transition-transform"
           />
         </Link>

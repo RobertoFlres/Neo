@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -44,9 +45,12 @@ const ContributorSidebar = () => {
       {/* Logo/Header */}
       <div className="p-6 border-b border-gray-200">
         <Link href="/contributor" className="flex items-center justify-center">
-          <img 
+          <Image 
             src="/logonuevo.svg" 
             alt="neo" 
+            width={140}
+            height={40}
+            priority
             className="h-10 w-auto"
             style={{ filter: 'brightness(0) saturate(100%) invert(20%) sepia(90%) saturate(2000%) hue-rotate(220deg) brightness(0.85) contrast(1.2)' }}
           />
@@ -78,11 +82,13 @@ const ContributorSidebar = () => {
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center gap-3 mb-4 px-4 py-3 rounded-lg bg-gray-50">
           {session?.user?.image ? (
-            <img
+            <Image
               src={session.user.image}
               alt={session.user.name || "User"}
-              className="w-10 h-10 rounded-full border-2 border-[#2b3e81]"
-              referrerPolicy="no-referrer"
+              width={40}
+              height={40}
+              unoptimized
+              className="w-10 h-10 rounded-full border-2 border-[#2b3e81] object-cover"
             />
           ) : (
             <div className="w-10 h-10 bg-gradient-to-br from-[#2b3e81] to-[#4d6fff] rounded-full flex items-center justify-center text-white font-bold">

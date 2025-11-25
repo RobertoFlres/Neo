@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { useSession, signOut } from "next-auth/react";
@@ -44,13 +44,13 @@ const ButtonAccount = () => {
         <>
           <Popover.Button className="btn">
             {session?.user?.image ? (
-              <img
+              <Image
                 src={session?.user?.image}
                 alt={session?.user?.name || "Account"}
-                className="w-6 h-6 rounded-full shrink-0"
-                referrerPolicy="no-referrer"
                 width={24}
                 height={24}
+                unoptimized
+                className="w-6 h-6 rounded-full shrink-0 object-cover"
               />
             ) : (
               <span className="w-6 h-6 bg-base-300 flex justify-center items-center rounded-full shrink-0">

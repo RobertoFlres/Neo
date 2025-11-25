@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import Image from "next/image";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,13 +28,13 @@ const ButtonSignin = ({ text = "Get started", extraStyle }) => {
         className={`${extraStyle ? extraStyle : "btn"} flex items-center gap-2`}
       >
         {session.user?.image ? (
-          <img
+          <Image
             src={session.user?.image}
             alt={session.user?.name || "Account"}
-            className="w-6 h-6 rounded-full shrink-0"
-            referrerPolicy="no-referrer"
             width={24}
             height={24}
+            unoptimized
+            className="w-6 h-6 rounded-full shrink-0 object-cover"
           />
         ) : (
           <span className="w-6 h-6 bg-base-300 flex justify-center items-center rounded-full shrink-0">

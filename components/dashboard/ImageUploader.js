@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -63,9 +64,12 @@ export function ImageUploader({ onImageUpload, currentImage }) {
     <div className="space-y-2">
       {uploadedImage && (
         <div className="relative">
-          <img
+          <Image
             src={uploadedImage}
             alt="Article preview"
+            width={800}
+            height={450}
+            unoptimized
             className="w-full h-auto object-contain rounded-lg"
           />
           <button

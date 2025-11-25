@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -347,11 +348,13 @@ const DashboardHeader = ({ onMenuClick }) => {
               className="flex items-center gap-2 ml-2 hover:opacity-80 transition-opacity"
             >
               {session?.user?.image ? (
-                <img
+                <Image
                   src={session.user.image}
                   alt={session.user.name || "User"}
-                  className="w-10 h-10 rounded-full border-2 border-[#2b3e81]"
-                  referrerPolicy="no-referrer"
+                  width={40}
+                  height={40}
+                  unoptimized
+                  className="w-10 h-10 rounded-full border-2 border-[#2b3e81] object-cover"
                 />
               ) : (
                 <div className="w-10 h-10 bg-gradient-to-br from-[#2b3e81] to-[#4d6fff] rounded-full flex items-center justify-center text-white font-bold">

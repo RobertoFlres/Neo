@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import RichTextEditor from "@/components/dashboard/RichTextEditor";
@@ -181,10 +182,13 @@ export default function ArticleEditor({ onSave, onCancel, initialData }) {
             />
             {article.image && (
               <div className="mt-2">
-                <img
+                <Image
                   src={article.image}
                   alt="Preview"
-                  className="max-w-xs rounded-lg border border-gray-300"
+                  width={400}
+                  height={250}
+                  unoptimized
+                  className="max-w-xs rounded-lg border border-gray-300 object-cover"
                 />
               </div>
             )}

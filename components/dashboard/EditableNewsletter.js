@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { CopyArticleButton } from "./CopyArticleButton";
@@ -231,7 +232,7 @@ export function EditableNewsletter({ newsletter, onUpdate, editing, setEditing, 
           </div>
           {/* Logo - Centered */}
           <div className="flex items-center justify-center">
-                          <img src="/logonuevo2.png" alt="neo" className="h-32 w-auto" />
+            <Image src="/logonuevo2.png" alt="neo" width={320} height={128} priority className="h-32 w-auto" />
           </div>
           {/* Title Display */}
           {!editing && title && (
@@ -350,11 +351,13 @@ export function EditableNewsletter({ newsletter, onUpdate, editing, setEditing, 
                   )}
                   {!editing && article.image && (
                     <div className="mb-4 flex justify-center">
-                      <img
+                      <Image
                         src={article.image}
                         alt={article.title}
+                        width={600}
+                        height={400}
+                        unoptimized
                         className="max-w-[600px] max-h-[400px] w-auto h-auto object-contain rounded-lg"
-                        style={{ maxWidth: '600px', maxHeight: '400px' }}
                         onError={(e) => console.error("❌ Error loading image:", e)}
                       />
                     </div>
@@ -413,7 +416,7 @@ export function EditableNewsletter({ newsletter, onUpdate, editing, setEditing, 
         }}>
           {/* Logo */}
           <div className="text-center mb-5">
-            <img src="/logonuevo2.png" alt={config.appName} style={{ height: '60px', width: 'auto', maxWidth: '200px', display: 'block', margin: '0 auto' }} />
+            <Image src="/logonuevo2.png" alt={config.appName} width={200} height={60} priority style={{ height: '60px', width: 'auto', maxWidth: '200px', display: 'block', margin: '0 auto' }} />
           </div>
           
           {/* Tagline */}
@@ -438,17 +441,20 @@ export function EditableNewsletter({ newsletter, onUpdate, editing, setEditing, 
                   verticalAlign: 'middle',
                   lineHeight: '40px'
                 }}
-              >
-                                 <img 
-                   src={config.social?.instagramIconUrl || "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg"} 
-                   alt="Instagram" 
-                   style={{ 
-                     width: '20px', 
-                     height: '20px', 
-                     display: 'block', 
-                     margin: '10px auto' 
-                   }} 
-                 />
+                >
+                <Image 
+                  src={config.social?.instagramIconUrl || "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg"} 
+                  alt="Instagram" 
+                  width={20}
+                  height={20}
+                  unoptimized
+                  style={{ 
+                    width: '20px', 
+                    height: '20px', 
+                    display: 'block', 
+                    margin: '10px auto' 
+                  }} 
+                />
               </a>
             )}
             {config.social?.linkedin && (
@@ -466,17 +472,20 @@ export function EditableNewsletter({ newsletter, onUpdate, editing, setEditing, 
                   verticalAlign: 'middle',
                   lineHeight: '40px'
                 }}
-              >
-                                 <img 
-                   src={config.social?.linkedinIconUrl || "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg"} 
-                   alt="LinkedIn" 
-                   style={{ 
-                     width: '20px', 
-                     height: '20px', 
-                     display: 'block', 
-                     margin: '10px auto' 
-                   }} 
-                 />
+                >
+                <Image 
+                  src={config.social?.linkedinIconUrl || "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg"} 
+                  alt="LinkedIn" 
+                  width={20}
+                  height={20}
+                  unoptimized
+                  style={{ 
+                    width: '20px', 
+                    height: '20px', 
+                    display: 'block', 
+                    margin: '10px auto' 
+                  }} 
+                />
               </a>
             )}
           </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -193,10 +194,13 @@ export default function ArticlesList() {
                     </div>
                     
                     {suggestion.image && (
-                      <img
+                      <Image
                         src={suggestion.image}
                         alt={suggestion.title}
-                        className="max-w-xs rounded-lg mb-3"
+                        width={600}
+                        height={350}
+                        unoptimized
+                        className="max-w-xs rounded-lg mb-3 object-cover"
                       />
                     )}
 

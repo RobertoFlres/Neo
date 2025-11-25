@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import config from "@/config";
 import ButtonSignin from "./ButtonSignin";
@@ -13,9 +14,12 @@ const Footer = () => {
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                <img 
+                <Image 
                   src="/logonuevo.svg" 
                   alt={config.appName}
+                  width={80}
+                  height={40}
+                  priority
                   className="h-5 w-auto filter brightness(0) invert(1)"
                 />
               </div>

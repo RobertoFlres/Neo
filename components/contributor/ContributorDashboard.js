@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
@@ -175,10 +176,13 @@ export default function ContributorDashboard() {
                             </div>
                             
                             {suggestion.image && (
-                              <img
+                              <Image
                                 src={suggestion.image}
                                 alt={suggestion.title}
-                                className="max-w-xs rounded-lg mb-3"
+                                width={600}
+                                height={350}
+                                unoptimized
+                                className="max-w-xs rounded-lg mb-3 object-cover"
                               />
                             )}
 

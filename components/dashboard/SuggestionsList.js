@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -193,10 +194,13 @@ export default function SuggestionsList({ initialSuggestions }) {
                     </div>
                     
                     {suggestion.image && (
-                      <img
+                      <Image
                         src={suggestion.image}
                         alt={suggestion.title}
-                        className="max-w-md rounded-lg mb-4"
+                        width={800}
+                        height={450}
+                        unoptimized
+                        className="max-w-md w-full rounded-lg mb-4 object-cover"
                       />
                     )}
 
@@ -448,10 +452,13 @@ export default function SuggestionsList({ initialSuggestions }) {
             {/* Contenido del Modal */}
             <div className="px-6 py-4 overflow-y-auto flex-1">
               {selectedSuggestion.image && (
-                <img
+                <Image
                   src={selectedSuggestion.image}
                   alt={selectedSuggestion.title}
-                  className="w-full rounded-lg mb-6"
+                  width={1200}
+                  height={675}
+                  unoptimized
+                  className="w-full rounded-lg mb-6 object-cover"
                 />
               )}
 

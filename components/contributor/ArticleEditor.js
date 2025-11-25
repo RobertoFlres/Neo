@@ -221,7 +221,7 @@ export default function ArticleEditor({ onSave, onCancel, initialData }) {
               onChange={(e) => handleArticleChange(index, "url", e.target.value)}
             />
             <p className="text-xs text-gray-500 mt-2">
-              Si no proporcionas un link, no aparecerá el botón "Ver más" en el newsletter
+              Si no proporcionas un link, no aparecerá el botón &ldquo;Ver más&rdquo; en el newsletter
             </p>
           </div>
         </div>

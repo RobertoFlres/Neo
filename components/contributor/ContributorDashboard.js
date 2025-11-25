@@ -2,13 +2,11 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import ArticleEditor from "./ArticleEditor";
 
 export default function ContributorDashboard() {
-  const { data: session } = useSession();
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
@@ -153,7 +151,7 @@ export default function ContributorDashboard() {
               ) : suggestions.length === 0 ? (
                 <div className="text-center py-12 opacity-60">
                   <p className="text-lg mb-2">No has creado artículos aún</p>
-                  <p className="text-sm">Haz clic en "Crear Nuevo Artículo" para comenzar</p>
+                  <p className="text-sm">Haz clic en &ldquo;Crear Nuevo Artículo&rdquo; para comenzar</p>
                 </div>
               ) : (
                 <div className="space-y-4">

@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
-export default function NewsletterListItem({ newsletter, onDelete }) {
+export default function NewsletterListItem({ newsletter }) {
   const [deleting, setDeleting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const router = useRouter();
 
   const getStatusBadge = (status) => {
     if (status === "sent") {
@@ -156,7 +154,7 @@ export default function NewsletterListItem({ newsletter, onDelete }) {
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 max-w-md w-full mx-4 relative z-10">
             <h3 className="text-xl font-bold text-gray-800 mb-4">¿Eliminar newsletter?</h3>
             <p className="text-gray-600 mb-2">
-              ¿Estás seguro de que quieres eliminar <strong className="text-gray-800">"{newsletter.title}"</strong>?
+              ¿Estás seguro de que quieres eliminar <strong className="text-gray-800">&ldquo;{newsletter.title}&rdquo;</strong>?
             </p>
             <p className="text-sm text-red-600 mb-6">
               ⚠️ Esta acción no se puede deshacer.

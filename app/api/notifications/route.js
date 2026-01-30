@@ -4,7 +4,9 @@ import connectMongo from "@/libs/mongoose";
 import ArticleSuggestion from "@/models/ArticleSuggestion";
 import Lead from "@/models/Lead";
 
-export async function GET(request) {
+export const dynamic = "force-dynamic";
+
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 

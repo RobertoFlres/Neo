@@ -4,7 +4,9 @@ import connectMongo from "@/libs/mongoose";
 import Lead from "@/models/Lead";
 import Newsletter from "@/models/Newsletter";
 
-export async function GET(request) {
+export const dynamic = "force-dynamic";
+
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 

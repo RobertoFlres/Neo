@@ -21,14 +21,15 @@ const ButtonLead = ({ extraStyle }) => {
     try {
       await apiClient.post("/lead", { email });
 
-      toast.success("¡Excelente! Revisa tu email para confirmar tu suscripción.");
+      toast.success("¡Gracias por suscribirte! Te mantendremos informado.");
 
       // just remove the focus on the input
       inputRef.current.blur();
       setEmail("");
       setIsDisabled(true);
     } catch (error) {
-      console.log(error);
+      console.error("Error subscribing:", error);
+      toast.error("Hubo un error al suscribirte. Intenta de nuevo.");
     } finally {
       setIsLoading(false);
     }

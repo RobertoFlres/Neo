@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Lead from "@/models/Lead";
-import crypto from "crypto";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/unsubscribe

@@ -7,7 +7,10 @@ import SuggestionsList from "@/components/dashboard/SuggestionsList";
 
 export const dynamic = "force-dynamic";
 
-const ADMIN_EMAIL = "roberto24flores@gmail.com";
+const ADMIN_EMAILS = [
+  "rflores@startupchihuahua.com",
+  "rflores@startupchihuahua.org",
+];
 
 export default async function SuggestionsPage() {
   const session = await getServerSession(authOptions);
@@ -17,7 +20,7 @@ export default async function SuggestionsPage() {
   }
 
   const userEmail = session?.user?.email?.toLowerCase();
-  const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
   if (!isAdmin) {
     redirect("/?error=access_denied");

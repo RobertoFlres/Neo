@@ -4,7 +4,10 @@ import { authOptions } from "@/libs/next-auth";
 import connectMongo from "@/libs/mongoose";
 import ArticleSuggestion from "@/models/ArticleSuggestion";
 
-const ADMIN_EMAIL = "roberto24flores@gmail.com";
+const ADMIN_EMAILS = [
+  "rflores@startupchihuahua.com",
+  "rflores@startupchihuahua.org",
+];
 
 // GET - Get a single suggestion
 export async function GET(req, { params }) {
@@ -20,7 +23,7 @@ export async function GET(req, { params }) {
     console.log("🔍 GET /api/article-suggestions/[id] - Requesting ID:", id);
     
     const userEmail = session.user?.email?.toLowerCase();
-    const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+    const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
     
     console.log("👤 User:", userEmail, "Admin:", isAdmin);
 
@@ -81,7 +84,7 @@ export async function PUT(req, { params }) {
   }
 
   const userEmail = session.user?.email?.toLowerCase();
-  const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
   try {
     const { id } = params;
@@ -249,7 +252,7 @@ export async function DELETE(req, { params }) {
   try {
     const { id } = params;
     const userEmail = session.user?.email?.toLowerCase();
-    const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+    const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
     const suggestion = await ArticleSuggestion.findById(id);
 

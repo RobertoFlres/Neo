@@ -82,9 +82,9 @@ const NewsletterGrid = async () => {
   const articles = landingNews?.articles || [];
 
   return (
-    <section className="relative py-16 md:py-20 bg-gradient-to-b from-white via-[#f5f7ff] to-[#ecf3ff] overflow-hidden">
+    <section className="relative py-16 md:py-20 bg-gradient-to-b from-white via-[#f5f7ff] to-[#ecf3ff] overflow-hidden z-10">
       <div className="absolute inset-0 opacity-30 bg-[linear-gradient(to_right,#d7e2ff_1px,transparent_1px),linear-gradient(to_bottom,#d7e2ff_1px,transparent_1px)] bg-[size:70px_70px]"></div>
-      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] bg-blue-200/30 blur-[180px]"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] bg-blue-200/30 blur-[180px]"></div>
 
       <div className="relative max-w-6xl mx-auto px-6 md:px-10">
         <div className="text-center mb-12">

@@ -8,11 +8,33 @@ export default function GeneratePage() {
   const [articles, setArticles] = useState([]);
   const [approvedArticles, setApprovedArticles] = useState([]);
   const [selectedArticles, setSelectedArticles] = useState([]);
-  const [category, setCategory] = useState("startups");
-  const [country, setCountry] = useState("mx");
+  const [categories, setCategories] = useState(["startups"]); // Array of selected categories
   const [newsSources, setNewsSources] = useState(["newsdata"]); // Array of selected sources
   const [isGenerating, setIsGenerating] = useState(false);
   const [loadingApproved, setLoadingApproved] = useState(false);
+
+  // Available categories
+  const availableCategories = [
+    { id: "technology", label: "Tecnologia", emoji: "🚀" },
+    { id: "business", label: "Negocios", emoji: "💼" },
+    { id: "startups", label: "Startups", emoji: "📰" },
+  ];
+
+  // Toggle category
+  const toggleCategory = (categoryId) => {
+    setCategories((prev) => {
+      if (prev.includes(categoryId)) {
+        // Don't allow removing the last category
+        if (prev.length === 1) {
+          toast.error("Debes seleccionar al menos una categoria");
+          return prev;
+        }
+        return prev.filter((c) => c !== categoryId);
+      } else {
+        return [...prev, categoryId];
+      }
+    });
+  };
 
   // Toggle news source
   const toggleNewsSource = (source) => {
@@ -31,33 +53,37 @@ export default function GeneratePage() {
     try {
       const response = await fetch("/api/article-suggestions?status=approved");
       const data = await response.json();
-      
+
       if (data.suggestions) {
-        // Convert approved articles to the format expected by the newsletter generator
         const formattedArticles = data.suggestions.map((suggestion) => ({
           title: suggestion.title,
           description: suggestion.description || suggestion.summary?.replace(/<[^>]*>/g, "").substring(0, 200),
-          summary: suggestion.summary, // HTML content
-          url: suggestion.url && suggestion.url.trim() ? suggestion.url.trim() : undefined, // Only include url if it exists and is not empty
+          summary: suggestion.summary,
+          url: suggestion.url && suggestion.url.trim() ? suggestion.url.trim() : undefined,
           source: suggestion.source || "Colaborador",
           image: suggestion.image,
           titleColor: suggestion.titleColor || "#2b3e81",
-          isApprovedArticle: true, // Flag to identify approved articles
+          isApprovedArticle: true,
           suggestionId: suggestion._id || suggestion.id,
         }));
         setApprovedArticles(formattedArticles);
-        toast.success(`${formattedArticles.length} artículo${formattedArticles.length !== 1 ? 's' : ''} aprobado${formattedArticles.length !== 1 ? 's' : ''} cargado${formattedArticles.length !== 1 ? 's' : ''}`);
+        toast.success(`${formattedArticles.length} articulo${formattedArticles.length !== 1 ? 's' : ''} aprobado${formattedArticles.length !== 1 ? 's' : ''} cargado${formattedArticles.length !== 1 ? 's' : ''}`);
       }
     } catch (error) {
       console.error("Error fetching approved articles:", error);
-      toast.error("Error al cargar artículos aprobados");
+      toast.error("Error al cargar articulos aprobados");
     } finally {
       setLoadingApproved(false);
     }
   };
 
-  // Fetch news from selected sources
+  // Fetch news from selected sources and categories
   const fetchNews = async () => {
+    if (newsSources.length === 0) {
+      toast.error("Selecciona al menos una fuente de noticias");
+      return;
+    }
+
     setLoading(true);
     setArticles([]);
     setSelectedArticles([]);
@@ -65,36 +91,57 @@ export default function GeneratePage() {
     try {
       const allArticles = [];
 
-      // Fetch from all selected sources
+      // Fetch from all selected sources AND all selected categories
       for (const source of newsSources) {
-        let endpoint;
-        
-        if (source === "newsdata") {
-          endpoint = `/api/test-newsdata?category=${category}&country=${country}`;
-        } else if (source === "newsapi") {
-          endpoint = `/api/test-news?category=${category}&country=${country}`;
-        } else if (source === "hackernews") {
-          endpoint = `/api/test-hackernews?limit=10&category=${category}&country=${country}`;
-        } else         if (source === "techcrunch") {
-          endpoint = `/api/test-techcrunch?limit=10&category=${category}&country=${country}`;
-        } else if (source === "entrepreneur") {
-          endpoint = `/api/test-entrepreneur-es?limit=10&category=${category}`;
-        } else if (source === "expansion") {
-          endpoint = `/api/test-expansion?limit=10&category=${category}`;
-        } else if (source === "noro") {
-          endpoint = `/api/test-noro?limit=30&category=${category}`;
-        } else if (source === "referente") {
-          endpoint = `/api/test-referente?limit=30&category=${category}`;
-        } else if (source === "startuplinks") {
-          endpoint = `/api/test-startuplinks?limit=30&category=${category}`;
-        }
+        for (const category of categories) {
+          let endpoint;
 
-        if (endpoint) {
-          const response = await fetch(endpoint);
-          const data = await response.json();
+          if (source === "newsdata") {
+            endpoint = `/api/test-newsdata?category=${category}`;
+          } else if (source === "newsapi") {
+            endpoint = `/api/test-news?category=${category}`;
+          } else if (source === "hackernews") {
+            endpoint = `/api/test-hackernews?limit=10&category=${category}`;
+          } else if (source === "techcrunch") {
+            endpoint = `/api/test-techcrunch?limit=10&category=${category}`;
+          } else if (source === "entrepreneur") {
+            endpoint = `/api/test-entrepreneur-es?limit=10&category=${category}`;
+          } else if (source === "expansion") {
+            endpoint = `/api/test-expansion?limit=10&category=${category}`;
+          } else if (source === "noro") {
+            endpoint = `/api/test-noro?limit=15&category=${category}`;
+          } else if (source === "referente") {
+            endpoint = `/api/test-referente?limit=15&category=${category}`;
+          } else if (source === "startuplinks") {
+            endpoint = `/api/test-startuplinks?limit=15&category=${category}`;
+          } else if (source === "contxto") {
+            endpoint = `/api/test-contxto?limit=15&category=${category}`;
+          } else if (source === "forbes") {
+            endpoint = `/api/test-forbes-mx?limit=15&category=${category}`;
+          } else if (source === "theverge") {
+            endpoint = `/api/test-theverge?limit=10&category=${category}`;
+          } else if (source === "wired") {
+            endpoint = `/api/test-wired?limit=10&category=${category}`;
+          } else if (source === "crunchbase") {
+            endpoint = `/api/test-crunchbase?limit=15&category=${category}`;
+          }
 
-          if (data.success && data.articles) {
-            allArticles.push(...data.articles);
+          if (endpoint) {
+            try {
+              const response = await fetch(endpoint);
+              const data = await response.json();
+
+              if (data.success && data.articles) {
+                // Add category tag to each article
+                const articlesWithCategory = data.articles.map((article) => ({
+                  ...article,
+                  category: category,
+                }));
+                allArticles.push(...articlesWithCategory);
+              }
+            } catch (err) {
+              console.log(`Error fetching ${source}/${category}:`, err.message);
+            }
           }
         }
       }
@@ -105,11 +152,11 @@ export default function GeneratePage() {
       );
 
       setArticles(uniqueArticles);
-      
+
       if (uniqueArticles.length === 0) {
-        toast.error("No se encontraron artículos. Intenta con otra categoría.");
+        toast.error("No se encontraron articulos. Intenta con otras categorias o fuentes.");
       } else {
-        toast.success(`Se obtuvieron ${uniqueArticles.length} artículos`);
+        toast.success(`Se obtuvieron ${uniqueArticles.length} articulos`);
       }
     } catch (error) {
       toast.error("Error al obtener noticias");
@@ -120,7 +167,6 @@ export default function GeneratePage() {
   };
 
   // Toggle article selection
-  // Index format: "news-{index}" for news articles, "approved-{index}" for approved articles
   const toggleArticle = (type, index) => {
     const articleKey = `${type}-${index}`;
     if (selectedArticles.includes(articleKey)) {
@@ -146,7 +192,7 @@ export default function GeneratePage() {
   // Generate newsletter with GPT
   const generateNewsletter = async () => {
     if (selectedArticles.length === 0) {
-      toast.error("Selecciona al menos un artículo");
+      toast.error("Selecciona al menos un articulo");
       return;
     }
 
@@ -158,8 +204,7 @@ export default function GeneratePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           selectedArticles: getSelectedArticlesData(),
-          category,
-          country,
+          categories,
         }),
       });
 
@@ -167,7 +212,6 @@ export default function GeneratePage() {
 
       if (data.success) {
         toast.success("Newsletter generado exitosamente!");
-        // Redirect to newsletter detail page
         window.location.href = `/dashboard/newsletters/${data.newsletter.id}`;
       } else {
         toast.error(data.error || "Error al generar newsletter");
@@ -180,6 +224,25 @@ export default function GeneratePage() {
     }
   };
 
+  // Get category badge color
+  const getCategoryColor = (category) => {
+    const colors = {
+      technology: "bg-blue-100 text-blue-800 border-blue-200",
+      business: "bg-purple-100 text-purple-800 border-purple-200",
+      startups: "bg-green-100 text-green-800 border-green-200",
+    };
+    return colors[category] || "bg-gray-100 text-gray-800 border-gray-200";
+  };
+
+  const getCategoryLabel = (category) => {
+    const labels = {
+      technology: "Tecnologia",
+      business: "Negocios",
+      startups: "Startups",
+    };
+    return labels[category] || category;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -188,157 +251,197 @@ export default function GeneratePage() {
           Generar Newsletter
         </h1>
         <p className="text-gray-600">
-          Obtén noticias de News API y genera un newsletter con IA
+          Selecciona fuentes y categorias para obtener noticias
         </p>
       </div>
 
       {/* Source Selector */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center gap-4 flex-wrap">
-          <label className="text-sm font-semibold text-gray-700">
+        <div className="mb-4">
+          <label className="text-sm font-semibold text-gray-700 block mb-3">
             Fuentes de noticias:
           </label>
           <div className="flex gap-3 flex-wrap">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("newsdata")}
-                  onChange={() => toggleNewsSource("newsdata")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">NewsData.io</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("newsapi")}
-                  onChange={() => toggleNewsSource("newsapi")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">News API</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("hackernews")}
-                  onChange={() => toggleNewsSource("hackernews")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">Hacker News</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("techcrunch")}
-                  onChange={() => toggleNewsSource("techcrunch")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">TechCrunch</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("entrepreneur")}
-                  onChange={() => toggleNewsSource("entrepreneur")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">📰 Entrepreneur Español</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("expansion")}
-                  onChange={() => toggleNewsSource("expansion")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">📊 Expansión</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("noro")}
-                  onChange={() => toggleNewsSource("noro")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">🌵 Noro.mx</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("referente")}
-                  onChange={() => toggleNewsSource("referente")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">📰 Referente.mx</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
-                  checked={newsSources.includes("startuplinks")}
-                  onChange={() => toggleNewsSource("startuplinks")}
-                  disabled={loading}
-                />
-                <span className="text-sm text-gray-700">🚀 Startuplinks.world</span>
-              </label>
-            </div>
-          </div>
-      </div>
-
-      {/* Controls Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-6">Seleccionar Fuentes</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Categoría
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("newsdata")}
+                onChange={() => toggleNewsSource("newsdata")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">NewsData.io</span>
             </label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2b3e81] focus:border-transparent bg-white"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              disabled={loading}
-            >
-              <option value="technology">🚀 Tecnología</option>
-              <option value="business">💼 Negocios / Emprendimiento</option>
-              <option value="startups">📰 Startups</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              País
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("newsapi")}
+                onChange={() => toggleNewsSource("newsapi")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">News API</span>
             </label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2b3e81] focus:border-transparent bg-white"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              disabled={loading}
-            >
-              <option value="mx">🇲🇽 México</option>
-              <option value="us">🇺🇸 Estados Unidos</option>
-              <option value="ar">🇦🇷 Argentina</option>
-              <option value="br">🇧🇷 Brasil</option>
-              <option value="es">🇪🇸 España</option>
-              <option value="gb">🇬🇧 Reino Unido</option>
-            </select>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("hackernews")}
+                onChange={() => toggleNewsSource("hackernews")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Hacker News</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("techcrunch")}
+                onChange={() => toggleNewsSource("techcrunch")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">TechCrunch</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("entrepreneur")}
+                onChange={() => toggleNewsSource("entrepreneur")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Entrepreneur ES</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("expansion")}
+                onChange={() => toggleNewsSource("expansion")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Expansion</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("noro")}
+                onChange={() => toggleNewsSource("noro")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Noro.mx</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("referente")}
+                onChange={() => toggleNewsSource("referente")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Referente.mx</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("startuplinks")}
+                onChange={() => toggleNewsSource("startuplinks")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Startuplinks</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("contxto")}
+                onChange={() => toggleNewsSource("contxto")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Contxto LATAM</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("forbes")}
+                onChange={() => toggleNewsSource("forbes")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Forbes Mexico</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("theverge")}
+                onChange={() => toggleNewsSource("theverge")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">The Verge</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("wired")}
+                onChange={() => toggleNewsSource("wired")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Wired</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                checked={newsSources.includes("crunchbase")}
+                onChange={() => toggleNewsSource("crunchbase")}
+                disabled={loading}
+              />
+              <span className="text-sm text-gray-700">Crunchbase</span>
+            </label>
           </div>
         </div>
 
+        <div className="border-t border-gray-200 pt-4">
+          <label className="text-sm font-semibold text-gray-700 block mb-3">
+            Categorias (puedes seleccionar varias):
+          </label>
+          <div className="flex gap-3 flex-wrap">
+            {availableCategories.map((cat) => (
+              <label
+                key={cat.id}
+                className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border-2 transition-all ${
+                  categories.includes(cat.id)
+                    ? "border-[#2b3e81] bg-blue-50"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 text-[#2b3e81] border-gray-300 rounded focus:ring-[#2b3e81] focus:ring-2 cursor-pointer"
+                  checked={categories.includes(cat.id)}
+                  onChange={() => toggleCategory(cat.id)}
+                  disabled={loading}
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  {cat.emoji} {cat.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex gap-4">
           <button
             className="bg-gradient-to-br from-[#2b3e81] to-[#4d6fff] text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 flex-1"
             onClick={fetchNews}
-            disabled={loading}
+            disabled={loading || newsSources.length === 0}
           >
             {loading ? (
               <>
@@ -358,7 +461,7 @@ export default function GeneratePage() {
                 >
                   <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </svg>
-                Obtener Noticias
+                Obtener Noticias ({categories.length} categoria{categories.length !== 1 ? 's' : ''})
               </>
             )}
           </button>
@@ -377,7 +480,7 @@ export default function GeneratePage() {
               </>
             ) : (
               <>
-                ✅ Cargar Artículos Aprobados
+                Cargar Articulos Aprobados
               </>
             )}
           </button>
@@ -399,7 +502,7 @@ export default function GeneratePage() {
               ></path>
             </svg>
             <span className="text-blue-800 font-medium">
-              {selectedArticles.length} artículo{selectedArticles.length !== 1 ? 's' : ''} seleccionado{selectedArticles.length !== 1 ? 's' : ''}
+              {selectedArticles.length} articulo{selectedArticles.length !== 1 ? 's' : ''} seleccionado{selectedArticles.length !== 1 ? 's' : ''}
             </span>
           </div>
         )}
@@ -410,7 +513,7 @@ export default function GeneratePage() {
         <>
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              ✅ Artículos Aprobados ({approvedArticles.length})
+              Articulos Aprobados ({approvedArticles.length})
             </h2>
           </div>
 
@@ -438,15 +541,15 @@ export default function GeneratePage() {
                         onClick={(e) => e.stopPropagation()}
                       />
                       <div className="flex-1 flex items-center justify-between gap-4">
-                        <h3 
+                        <h3
                           className="font-bold text-base"
                           style={{ color: article.titleColor || "#2b3e81" }}
                         >
                           {article.title}
                         </h3>
                         <div className="flex items-center gap-3 text-xs text-gray-600 flex-shrink-0">
-                          {article.source && <span>📰 {article.source}</span>}
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">✅ Aprobado</span>
+                          {article.source && <span>{article.source}</span>}
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">Aprobado</span>
                         </div>
                       </div>
                     </div>
@@ -463,7 +566,7 @@ export default function GeneratePage() {
         <>
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Artículos Disponibles ({articles.length})
+              Articulos Disponibles ({articles.length})
             </h2>
           </div>
 
@@ -491,15 +594,22 @@ export default function GeneratePage() {
                         onClick={(e) => e.stopPropagation()}
                       />
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2 text-gray-800">
-                          {article.title}
-                        </h3>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <h3 className="font-bold text-lg text-gray-800">
+                            {article.title}
+                          </h3>
+                          {article.category && (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium border flex-shrink-0 ${getCategoryColor(article.category)}`}>
+                              {getCategoryLabel(article.category)}
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600 mb-3">
                           {article.description}
                         </p>
                         <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span>📰 {article.source}</span>
-                          <span>🔗 {(() => {
+                          <span>{article.source}</span>
+                          <span>{(() => {
                             try {
                               return new URL(article.url).hostname;
                             } catch (e) {
@@ -517,7 +627,7 @@ export default function GeneratePage() {
         </>
       )}
 
-      {/* Generate Button - Single button at the end */}
+      {/* Generate Button */}
       {selectedArticles.length > 0 && (
         <div className="flex justify-center mt-6">
           <button
@@ -535,7 +645,7 @@ export default function GeneratePage() {
               </>
             ) : (
               <>
-                🤖 Generar Newsletter con IA
+                Generar Newsletter con IA
               </>
             )}
           </button>

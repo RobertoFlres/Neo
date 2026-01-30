@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { getReferenteNews } from "@/libs/referente";
+import { getCrunchbaseNews } from "@/libs/crunchbase";
 
 /**
- * Test endpoint for Referente.mx
- * GET /api/test-referente?category=technology&limit=15
+ * Test endpoint for Crunchbase News
+ * GET /api/test-crunchbase?category=startups&limit=15
  */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category") || "technology";
+    const category = searchParams.get("category") || "startups";
     const limit = parseInt(searchParams.get("limit")) || 15;
 
-    console.log(`📰 Fetching ${limit} articles from Referente.mx (${category})`);
+    console.log(`📰 Fetching ${limit} articles from Crunchbase News (${category})`);
 
-    const articles = await getReferenteNews(category, limit);
+    const articles = await getCrunchbaseNews(category, limit);
 
     return NextResponse.json({
       success: true,
@@ -24,7 +24,7 @@ export async function GET(req) {
       articles,
     });
   } catch (error) {
-    console.error("❌ Error in test-referente:", error.message);
+    console.error("❌ Error in test-crunchbase:", error.message);
 
     return NextResponse.json(
       {

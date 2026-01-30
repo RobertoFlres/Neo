@@ -101,16 +101,15 @@ const config = {
   // Whitelist de emails permitidos para acceder al dashboard de colaboradores
   contributors: {
     allowedEmails: [
-      // Agrega aquí los emails de los colaboradores permitidos
       "roberto.flores.esp@gmail.com",
-      // Ejemplo: "colaborador1@ejemplo.com",
-      // Ejemplo: "colaborador2@ejemplo.com",
+      "rflores@startupchihuahua.com",
+      "rflores@startupchihuahua.org",
     ],
   },
   // Redes sociales para el footer del email
   social: {
-    instagram: "https://instagram.com/nodotech", // Cambia por tu URL de Instagram
-    linkedin: "https://linkedin.com/company/nodotech", // Cambia por tu URL de LinkedIn
+    instagram: "https://instagram.com/startupchihuahua",
+    linkedin: "https://linkedin.com/company/startupchihuahua",
     instagramIconUrl: "https://res.cloudinary.com/drolmne66/image/upload/v1762298390/newsletter/insta.png",
     linkedinIconUrl: "https://res.cloudinary.com/drolmne66/image/upload/v1762298391/newsletter/link.png",
   },

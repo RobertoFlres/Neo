@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { getReferenteNews } from "@/libs/referente";
+import { getContxtoNews } from "@/libs/contxto";
 
 /**
- * Test endpoint for Referente.mx
- * GET /api/test-referente?category=technology&limit=15
+ * Test endpoint for Contxto
+ * GET /api/test-contxto?category=startups&limit=15
  */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category") || "technology";
+    const category = searchParams.get("category") || "startups";
     const limit = parseInt(searchParams.get("limit")) || 15;
 
-    console.log(`📰 Fetching ${limit} articles from Referente.mx (${category})`);
+    console.log(`📰 Fetching ${limit} articles from Contxto (${category})`);
 
-    const articles = await getReferenteNews(category, limit);
+    const articles = await getContxtoNews(category, limit);
 
     return NextResponse.json({
       success: true,
@@ -24,7 +24,7 @@ export async function GET(req) {
       articles,
     });
   } catch (error) {
-    console.error("❌ Error in test-referente:", error.message);
+    console.error("❌ Error in test-contxto:", error.message);
 
     return NextResponse.json(
       {

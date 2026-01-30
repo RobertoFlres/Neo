@@ -1,77 +1,97 @@
 import axios from "axios";
 import { JSDOM } from "jsdom";
+import { filterByCategory } from "./categoryKeywords";
 
 /**
  * Scrape Entrepreneur Spanish Tech News
  * https://spanish.entrepreneur.com/tecnologia
- * 
+ *
  * @param {number} limit - Number of articles to fetch
  * @returns {Promise<Array>} Array of articles
  */
 export const getEntrepreneurSpanishArticles = async (limit = 20) => {
   try {
     console.log("📰 Scraping Entrepreneur Spanish...");
-    
-    const response = await axios.get("https://spanish.entrepreneur.com/tecnologia", {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      },
-      timeout: 15000,
-    });
 
-    const dom = new JSDOM(response.data);
-    const document = dom.window.document;
-    
-    const articles = [];
-    
-    // Try to find article containers
-    // Common selectors for article links
-    const articleSelectors = [
-      'a[href*="/tecnologia/"]',
-      '.article-link',
-      '.post-link',
-      'article a',
+    // Fetch from multiple sections for more content
+    const sections = [
+      "https://spanish.entrepreneur.com/tecnologia",
+      "https://spanish.entrepreneur.com/emprendedores",
+      "https://spanish.entrepreneur.com/startups",
     ];
-    
-    let articleElements = [];
-    for (const selector of articleSelectors) {
-      articleElements = document.querySelectorAll(selector);
-      if (articleElements.length > 0) break;
-    }
-    
-    articleElements.forEach((element, index) => {
-      if (index < limit) {
-        try {
-          const link = element.href || element.getAttribute('href');
-          const title = element.textContent?.trim() || 
-                       element.querySelector('h2, h3')?.textContent?.trim() ||
-                       element.getAttribute('title') || 
-                       '';
-          
-          if (title && link && link.includes('/tecnologia/')) {
-            articles.push({
-              title,
-              description: '',
-              url: link.startsWith('http') ? link : `https://spanish.entrepreneur.com${link}`,
-              source: "Entrepreneur Español",
-              publishedAt: new Date().toISOString(),
-              image: null,
-            });
+
+    const allArticles = [];
+
+    for (const sectionUrl of sections) {
+      try {
+        const response = await axios.get(sectionUrl, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          },
+          timeout: 15000,
+        });
+
+        const dom = new JSDOM(response.data);
+        const document = dom.window.document;
+
+        // Get all article links
+        const allLinks = document.querySelectorAll("a[href]");
+
+        allLinks.forEach((element) => {
+          try {
+            const link = element.href || element.getAttribute("href");
+
+            // Filter for article links
+            if (
+              link &&
+              (link.includes("/tecnologia/") ||
+                link.includes("/emprendedores/") ||
+                link.includes("/startups/") ||
+                link.includes("/finanzas/"))
+            ) {
+              const titleElement = element.querySelector("h2, h3, h4, p") || element;
+              let title =
+                titleElement.textContent?.trim() ||
+                element.getAttribute("title") ||
+                element.textContent?.trim() ||
+                "";
+
+              // Clean up title
+              title = title.replace(/\s+/g, " ").trim();
+
+              if (title.length > 15) {
+                const fullUrl = link.startsWith("http")
+                  ? link
+                  : `https://spanish.entrepreneur.com${link}`;
+
+                allArticles.push({
+                  title,
+                  description: "",
+                  url: fullUrl,
+                  source: "Entrepreneur Español",
+                  publishedAt: new Date().toISOString(),
+                  image: null,
+                });
+              }
+            }
+          } catch (error) {
+            // Ignore errors for individual links
           }
-        } catch (error) {
-          console.error("Error extracting article:", error);
-        }
+        });
+      } catch (error) {
+        console.log(`⚠️ Error fetching ${sectionUrl}:`, error.message);
       }
-    });
-    
+    }
+
     // Remove duplicates
     const uniqueArticles = Array.from(
-      new Map(articles.map(article => [article.url, article])).values()
+      new Map(allArticles.map((article) => [article.url, article])).values()
     );
-    
+
     console.log(`✅ Scraped ${uniqueArticles.length} articles from Entrepreneur Spanish`);
-    
+
     return uniqueArticles.slice(0, limit);
   } catch (error) {
     console.error("❌ Error scraping Entrepreneur Spanish:", error.message);
@@ -80,30 +100,26 @@ export const getEntrepreneurSpanishArticles = async (limit = 20) => {
 };
 
 /**
- * Get tech news filtered by keywords
+ * Get tech news filtered by category using centralized keywords
+ *
+ * @param {string} category - Category to filter (technology, business, startups)
+ * @param {number} limit - Number of articles
+ * @returns {Promise<Array>} Filtered articles
  */
-export const getEntrepreneurTechNews = async (category = "startups", limit = 10) => {
+export const getEntrepreneurTechNews = async (category = "technology", limit = 15) => {
   try {
-    const articles = await getEntrepreneurSpanishArticles(limit * 2);
-    
-    // Filter by category keywords
-    const keywords = {
-      technology: ["IA", "inteligencia artificial", "tecnología", "tech", "ChatGPT", "AI"],
-      business: ["negocios", "empresa", "startup", "emprendedor"],
-      startups: ["startup", "emprendimiento", "unicornio", "financiamiento", "funding"],
-    };
-    
-    const categoryKeywords = keywords[category] || keywords.technology;
-    
-    const filteredArticles = articles.filter((article) => {
-      const title = article.title.toLowerCase();
-      return categoryKeywords.some(keyword => title.includes(keyword.toLowerCase()));
-    });
-    
-    return filteredArticles.slice(0, limit);
+    const articles = await getEntrepreneurSpanishArticles(limit * 3);
+
+    // Use centralized category filtering (strict mode)
+    const filteredArticles = filterByCategory(articles, category, true);
+
+    const result = filteredArticles.slice(0, limit);
+
+    console.log(`✅ Entrepreneur ES: ${result.length}/${articles.length} articles matched category "${category}"`);
+
+    return result;
   } catch (error) {
     console.error("❌ Error filtering Entrepreneur news:", error.message);
     return [];
   }
 };
-

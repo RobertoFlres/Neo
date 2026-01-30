@@ -5,7 +5,10 @@ import connectMongo from "@/libs/mongoose";
 import Contributor from "@/models/Contributor";
 
 // Define who can access the admin dashboard
-const ADMIN_EMAIL = "roberto24flores@gmail.com";
+const ADMIN_EMAILS = [
+  "rflores@startupchihuahua.com",
+  "rflores@startupchihuahua.org",
+];
 
 /**
  * GET /api/contributors
@@ -25,7 +28,7 @@ export async function GET(req) {
     }
 
     const userEmail = session?.user?.email?.toLowerCase();
-    const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+    const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
     if (!isAdmin) {
       return NextResponse.json(
@@ -69,7 +72,7 @@ export async function POST(req) {
     }
 
     const userEmail = session?.user?.email?.toLowerCase();
-    const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+    const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
     if (!isAdmin) {
       return NextResponse.json(
@@ -169,7 +172,7 @@ export async function DELETE(req) {
     }
 
     const userEmail = session?.user?.email?.toLowerCase();
-    const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+    const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
     if (!isAdmin) {
       return NextResponse.json(

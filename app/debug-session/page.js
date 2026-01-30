@@ -9,8 +9,11 @@ export default async function DebugSession() {
 
   const userEmail = session?.user?.email;
   const userEmailLower = userEmail?.toLowerCase();
-  const ADMIN_EMAIL = "roberto24flores@gmail.com";
-  const isAdmin = userEmailLower === ADMIN_EMAIL.toLowerCase();
+  const ADMIN_EMAILS = [
+    "rflores@startupchihuahua.com",
+    "rflores@startupchihuahua.org",
+  ];
+  const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmailLower);
   const allowedEmails = config.contributors?.allowedEmails || [];
   const isContributor = allowedEmails.some(
     (email) => email?.toLowerCase() === userEmailLower
@@ -43,7 +46,7 @@ export default async function DebugSession() {
               <strong>Is Admin:</strong> {isAdmin ? "✅ Yes" : "❌ No"}
             </div>
             <div>
-              <strong>Admin Email:</strong> {ADMIN_EMAIL.toLowerCase()}
+              <strong>Admin Emails:</strong> {ADMIN_EMAILS.join(", ")}
             </div>
             <div className="divider"></div>
             <div>

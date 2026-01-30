@@ -33,13 +33,8 @@ const Footer = () => {
 
           {/* Links */}
           <div>
-            <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-gray-500">Enlaces</h3>
+            <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-gray-500">Legal</h3>
             <ul className="space-y-3 text-sm">
-              <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">
-                  Blog
-                </Link>
-              </li>
               <li>
                 <Link href="/tos" className="text-gray-400 hover:text-white transition-colors">
                   Términos de Servicio

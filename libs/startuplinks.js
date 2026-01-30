@@ -1,5 +1,6 @@
 import axios from "axios";
 import { JSDOM } from "jsdom";
+import { filterByCategory } from "./categoryKeywords";
 
 /**
  * Scrape articles from Startuplinks.world
@@ -232,35 +233,24 @@ export const getStartuplinksArticles = async (limit = 30) => {
 };
 
 /**
- * Get articles filtered by category keywords
+ * Get articles filtered by category using centralized keywords
+ *
+ * @param {string} category - Category to filter (technology, business, startups)
+ * @param {number} limit - Number of articles
+ * @returns {Promise<Array>} Filtered articles
  */
-export const getStartuplinksNews = async (category = "startups", limit = 10) => {
+export const getStartuplinksNews = async (category = "startups", limit = 15) => {
   try {
-    // Get all articles
-    const allArticles = await getStartuplinksArticles(100);
-    
-    // Filter by category keywords
-    const keywords = {
-      technology: ["IA", "inteligencia artificial", "tecnología", "tech", "ChatGPT", "AI", "software", "semiconductores", "digital", "innovación", "edtech", "fintech"],
-      business: ["negocios", "empresa", "startup", "emprendedor", "financiamiento", "inversión", "capital", "funding"],
-      startups: ["startup", "emprendimiento", "unicornio", "financiamiento", "funding", "inversión", "capital", "ecosistema", "fundraising", "ronda", "serie"],
-    };
-    
-    const categoryKeywords = keywords[category] || keywords.startups;
-    
-    const filteredArticles = allArticles.filter((article) => {
-      const title = article.title.toLowerCase();
-      const description = article.description.toLowerCase();
-      const articleCategory = (article.category || '').toLowerCase();
-      
-      return categoryKeywords.some(keyword => 
-        title.includes(keyword.toLowerCase()) || 
-        description.includes(keyword.toLowerCase()) ||
-        articleCategory.includes(keyword.toLowerCase())
-      );
-    });
-    
-    return filteredArticles.slice(0, limit);
+    const articles = await getStartuplinksArticles(limit * 3);
+
+    // Use centralized category filtering (strict mode)
+    const filteredArticles = filterByCategory(articles, category, true);
+
+    const result = filteredArticles.slice(0, limit);
+
+    console.log(`✅ Startuplinks: ${result.length}/${articles.length} articles matched category "${category}"`);
+
+    return result;
   } catch (error) {
     console.error("❌ Error filtering Startuplinks news:", error.message);
     return [];

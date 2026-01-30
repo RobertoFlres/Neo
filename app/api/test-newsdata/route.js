@@ -3,27 +3,29 @@ import { getNewsDataArticles } from "@/libs/newsData";
 
 /**
  * Test endpoint for NewsData.io
- * GET /api/test-newsdata?country=mx&category=technology
+ * GET /api/test-newsdata?category=technology
  */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category") || "technology";
-    const country = searchParams.get("country") || "mx";
+    const limit = parseInt(searchParams.get("limit")) || 15;
 
-    console.log(`📰 Fetching from NewsData.io: ${category}, ${country}`);
+    console.log(`📰 Fetching from NewsData.io: ${category}`);
 
-    const articles = await getNewsDataArticles(category, country, 10);
+    const articles = await getNewsDataArticles(category, limit);
 
     return NextResponse.json({
       success: true,
       count: articles.length,
-      message: articles.length === 0 ? `No articles found for ${country} - ${category}` : `${articles.length} articles found`,
-      articles: articles,
+      message: articles.length === 0
+        ? `No articles found for category "${category}"`
+        : `${articles.length} articles found`,
+      articles,
     });
   } catch (error) {
     console.error("❌ Error in test-newsdata:", error.message);
-    
+
     if (error.message.includes("key")) {
       return NextResponse.json(
         {
@@ -43,4 +45,3 @@ export async function GET(req) {
     );
   }
 }
-

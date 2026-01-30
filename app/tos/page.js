@@ -2,39 +2,19 @@ import Link from "next/link";
 import { getSEOTags } from "@/libs/seo";
 import config from "@/config";
 
-// CHATGPT PROMPT TO GENERATE YOUR TERMS & SERVICES — replace with your own data 👇
-
-// 1. Go to https://chat.openai.com/
-// 2. Copy paste bellow
-// 3. Replace the data with your own (if needed)
-// 4. Paste the answer from ChatGPT directly in the <pre> tag below
-
-// You are an excellent lawyer.
-
-// I need your help to write a simple Terms & Services for my website. Here is some context:
-// - Website: https://shipfa.st
-// - Name: ShipFast
-// - Contact information: marc@shipfa.st
-// - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
-// - Ownership: when buying a package, users can download code to create apps. They own the code but they do not have the right to resell it. They can ask for a full refund within 7 day after the purchase.
-// - User data collected: name, email and payment information
-// - Non-personal data collection: web cookies
-// - Link to privacy-policy: https://shipfa.st/privacy-policy
-// - Governing Law: France
-// - Updates to the Terms: users will be updated by email
-
-// Please write a simple Terms & Services for my site. Add the current date. Do not add or explain your reasoning. Answer:
-
 export const metadata = getSEOTags({
-  title: `Terms and Conditions | ${config.appName}`,
+  title: `Términos de Servicio | ${config.appName}`,
   canonicalUrlRelative: "/tos",
 });
 
 const TOS = () => {
   return (
-    <main className="max-w-xl mx-auto">
-      <div className="p-5">
-        <Link href="/" className="btn btn-ghost">
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors mb-8"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
@@ -47,50 +27,117 @@ const TOS = () => {
               clipRule="evenodd"
             />
           </svg>
-          Back
+          Volver al inicio
         </Link>
-        <h1 className="text-3xl font-extrabold pb-6">
-          Terms and Conditions for {config.appName}
-        </h1>
 
-        <pre
-          className="leading-relaxed whitespace-pre-wrap"
-          style={{ fontFamily: "sans-serif" }}
-        >
-          {`Last Updated: September 26, 2023
+        <article className="prose prose-gray max-w-none">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            Términos de Servicio
+          </h1>
+          <p className="text-gray-500 text-sm mb-8">
+            Última actualización: Enero 2026
+          </p>
 
-Welcome to ShipFast!
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Aceptación de los Términos</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Al suscribirte y utilizar el servicio de newsletter de {config.appName}, aceptas estos Términos de Servicio en su totalidad. Si no estás de acuerdo con alguno de estos términos, te pedimos que no utilices nuestro servicio.
+            </p>
+          </section>
 
-These Terms of Service ("Terms") govern your use of the ShipFast website at https://shipfa.st ("Website") and the services provided by ShipFast. By using our Website and services, you agree to these Terms.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">2. Descripción del Servicio</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              {config.appName} es un servicio gratuito de newsletter que proporciona a sus suscriptores un resumen diario curado de noticias relacionadas con startups, tecnología y emprendimiento. El contenido que compartimos incluye:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>Resúmenes y enlaces a artículos de fuentes públicas de noticias</li>
+              <li>Análisis y comentarios sobre tendencias del sector tecnológico</li>
+              <li>Información sobre startups, financiamiento e innovación</li>
+            </ul>
+          </section>
 
-1. Description of ShipFast
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">3. Contenido de Terceros</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Nuestro newsletter incluye resúmenes y enlaces a contenido publicado por terceros. Es importante que entiendas que:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>No somos propietarios ni responsables del contenido original de las fuentes externas</li>
+              <li>Los resúmenes que proporcionamos son con fines informativos y de referencia</li>
+              <li>Siempre incluimos la atribución y enlace a la fuente original</li>
+              <li>El contenido original está sujeto a los términos y derechos de autor de cada publicación</li>
+              <li>No garantizamos la exactitud, integridad o actualidad del contenido de terceros</li>
+            </ul>
+          </section>
 
-ShipFast is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">4. Propiedad Intelectual</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              El diseño, formato y selección editorial de {config.appName} son propiedad de Startup Chihuahua. Los artículos, imágenes y contenido enlazado pertenecen a sus respectivos propietarios y están protegidos por las leyes de derechos de autor aplicables.
+            </p>
+          </section>
 
-2. Ownership and Usage Rights
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">5. Uso Aceptable</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Al utilizar nuestro servicio, te comprometes a:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>Proporcionar información de contacto válida y actualizada</li>
+              <li>No utilizar el servicio para actividades ilegales o no autorizadas</li>
+              <li>No redistribuir masivamente el contenido del newsletter sin autorización</li>
+              <li>No intentar acceder a sistemas o datos no autorizados</li>
+            </ul>
+          </section>
 
-When you purchase a package from ShipFast, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Suscripción y Cancelación</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              La suscripción a {config.appName} es gratuita y voluntaria. Puedes cancelar tu suscripción en cualquier momento utilizando el enlace de cancelación incluido en cada email o contactándonos directamente. La cancelación es efectiva de manera inmediata.
+            </p>
+          </section>
 
-3. User Data and Privacy
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Limitación de Responsabilidad</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              {config.appName} se proporciona "tal cual" sin garantías de ningún tipo. No nos hacemos responsables de:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>Decisiones tomadas basadas en la información proporcionada</li>
+              <li>Interrupciones temporales del servicio</li>
+              <li>Contenido inexacto o desactualizado de fuentes externas</li>
+              <li>Daños directos o indirectos derivados del uso del servicio</li>
+            </ul>
+          </section>
 
-We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://shipfa.st/privacy-policy.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">8. Modificaciones</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Nos reservamos el derecho de modificar estos Términos de Servicio en cualquier momento. Los cambios significativos serán comunicados a través de nuestro newsletter. El uso continuado del servicio después de cualquier modificación constituye la aceptación de los nuevos términos.
+            </p>
+          </section>
 
-4. Non-Personal Data Collection
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">9. Ley Aplicable</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Estos Términos de Servicio se rigen por las leyes de los Estados Unidos Mexicanos. Cualquier disputa será sometida a la jurisdicción de los tribunales competentes en el Estado de Chihuahua, México.
+            </p>
+          </section>
 
-We use web cookies to collect non-personal data for the purpose of improving our services and user experience.
-
-5. Governing Law
-
-These Terms are governed by the laws of France.
-
-6. Updates to the Terms
-
-We may update these Terms from time to time. Users will be notified of any changes via email.
-
-For any questions or concerns regarding these Terms of Service, please contact us at marc@shipfa.st.
-
-Thank you for using ShipFast!`}
-        </pre>
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">10. Contacto</h2>
+            <p className="text-gray-700 leading-relaxed">
+              Si tienes preguntas sobre estos Términos de Servicio, puedes contactarnos en:{" "}
+              <a
+                href="mailto:contacto@startupchihuahua.org"
+                className="text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                contacto@startupchihuahua.org
+              </a>
+            </p>
+          </section>
+        </article>
       </div>
     </main>
   );

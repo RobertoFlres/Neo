@@ -1,34 +1,31 @@
 import { NextResponse } from "next/server";
-import { getStartuplinksArticles, getStartuplinksNews } from "@/libs/startuplinks";
+import { getStartuplinksNews } from "@/libs/startuplinks";
 
 /**
  * Test endpoint for Startuplinks.world
- * GET /api/test-startuplinks?limit=30&category=startups
+ * GET /api/test-startuplinks?category=startups&limit=15
  */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const limit = parseInt(searchParams.get("limit")) || 30;
     const category = searchParams.get("category") || "startups";
+    const limit = parseInt(searchParams.get("limit")) || 15;
 
-    console.log(`📰 Fetching from Startuplinks.world: ${category}, limit: ${limit}`);
+    console.log(`📰 Fetching ${limit} articles from Startuplinks.world (${category})`);
 
-    // Use filtered news if category is specified, otherwise get all articles
-    const articles = category && category !== "all" 
-      ? await getStartuplinksNews(category, limit)
-      : await getStartuplinksArticles(limit);
+    const articles = await getStartuplinksNews(category, limit);
 
     return NextResponse.json({
       success: true,
       count: articles.length,
-      message: articles.length === 0 
-        ? `No articles found for ${category}` 
-        : `${articles.length} articles found from Startuplinks.world`,
-      articles: articles,
+      message: articles.length === 0
+        ? `No articles found for category "${category}"`
+        : `${articles.length} articles found`,
+      articles,
     });
   } catch (error) {
     console.error("❌ Error in test-startuplinks:", error.message);
-    
+
     return NextResponse.json(
       {
         success: false,
@@ -38,4 +35,3 @@ export async function GET(req) {
     );
   }
 }
-

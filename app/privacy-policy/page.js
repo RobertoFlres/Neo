@@ -2,39 +2,19 @@ import Link from "next/link";
 import { getSEOTags } from "@/libs/seo";
 import config from "@/config";
 
-// CHATGPT PROMPT TO GENERATE YOUR PRIVACY POLICY — replace with your own data 👇
-
-// 1. Go to https://chat.openai.com/
-// 2. Copy paste bellow
-// 3. Replace the data with your own (if needed)
-// 4. Paste the answer from ChatGPT directly in the <pre> tag below
-
-// You are an excellent lawyer.
-
-// I need your help to write a simple privacy policy for my website. Here is some context:
-// - Website: https://shipfa.st
-// - Name: ShipFast
-// - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
-// - User data collected: name, email and payment information
-// - Non-personal data collection: web cookies
-// - Purpose of Data Collection: Order processing
-// - Data sharing: we do not share the data with any other parties
-// - Children's Privacy: we do not collect any data from children
-// - Updates to the Privacy Policy: users will be updated by email
-// - Contact information: marc@shipfa.st
-
-// Please write a simple privacy policy for my site. Add the current date.  Do not add or explain your reasoning. Answer:
-
 export const metadata = getSEOTags({
-  title: `Privacy Policy | ${config.appName}`,
+  title: `Política de Privacidad | ${config.appName}`,
   canonicalUrlRelative: "/privacy-policy",
 });
 
 const PrivacyPolicy = () => {
   return (
-    <main className="max-w-xl mx-auto">
-      <div className="p-5">
-        <Link href="/" className="btn btn-ghost">
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors mb-8"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
@@ -46,63 +26,190 @@ const PrivacyPolicy = () => {
               d="M15 10a.75.75 0 01-.75.75H7.612l2.158 1.96a.75.75 0 11-1.04 1.08l-3.5-3.25a.75.75 0 010-1.08l3.5-3.25a.75.75 0 111.04 1.08L7.612 9.25h6.638A.75.75 0 0115 10z"
               clipRule="evenodd"
             />
-          </svg>{" "}
-          Back
+          </svg>
+          Volver al inicio
         </Link>
-        <h1 className="text-3xl font-extrabold pb-6">
-          Privacy Policy for {config.appName}
-        </h1>
 
-        <pre
-          className="leading-relaxed whitespace-pre-wrap"
-          style={{ fontFamily: "sans-serif" }}
-        >
-          {`Last Updated: 2023-08-25
+        <article className="prose prose-gray max-w-none">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            Política de Privacidad
+          </h1>
+          <p className="text-gray-500 text-sm mb-8">
+            Última actualización: Enero 2026
+          </p>
 
-Thank you for visiting ShipFast ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://shipfa.st (the "Website").
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Introducción</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              En {config.appName} ("nosotros", "nuestro"), operado por Startup Chihuahua, nos comprometemos a proteger tu privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestro servicio de newsletter.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Al suscribirte a nuestro newsletter, aceptas las prácticas descritas en esta política.
+            </p>
+          </section>
 
-By accessing or using the Website, you agree to the terms of this Privacy Policy. If you do not agree with the practices described in this policy, please do not use the Website.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">2. Información que Recopilamos</h2>
 
-1. Information We Collect
+            <h3 className="text-lg font-medium text-gray-800 mb-3">2.1 Datos Personales</h3>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Recopilamos únicamente la información necesaria para proporcionar nuestro servicio:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li><strong>Dirección de correo electrónico:</strong> Para enviarte el newsletter y comunicaciones relacionadas con el servicio</li>
+              <li><strong>Nombre (opcional):</strong> Para personalizar nuestras comunicaciones contigo</li>
+              <li><strong>Preferencias de contenido:</strong> Si las proporcionas, para personalizar el contenido que recibes</li>
+            </ul>
 
-1.1 Personal Data
+            <h3 className="text-lg font-medium text-gray-800 mb-3">2.2 Datos No Personales</h3>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              También recopilamos información técnica de forma automática:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li><strong>Datos de uso del email:</strong> Tasas de apertura y clics para mejorar nuestro contenido</li>
+              <li><strong>Información del dispositivo:</strong> Tipo de navegador, sistema operativo</li>
+              <li><strong>Cookies:</strong> Para mejorar la experiencia en nuestro sitio web</li>
+            </ul>
+          </section>
 
-We collect the following personal information from you:
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">3. Uso de la Información</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Utilizamos tu información para los siguientes propósitos:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>Enviar el newsletter con noticias de startups, tecnología y emprendimiento</li>
+              <li>Personalizar el contenido según tus intereses</li>
+              <li>Comunicar actualizaciones importantes sobre el servicio</li>
+              <li>Mejorar y optimizar nuestro contenido y servicio</li>
+              <li>Cumplir con obligaciones legales</li>
+            </ul>
+          </section>
 
-Name: We collect your name to personalize your experience and communicate with you effectively.
-Email: We collect your email address to send you important information regarding your orders, updates, and communication.
-Payment Information: We collect payment details to process your orders securely. However, we do not store your payment information on our servers. Payments are processed by trusted third-party payment processors.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">4. Base Legal para el Procesamiento</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Procesamos tus datos personales bajo las siguientes bases legales:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li><strong>Consentimiento:</strong> Al suscribirte, nos das tu consentimiento para recibir comunicaciones</li>
+              <li><strong>Interés legítimo:</strong> Para mejorar nuestros servicios y contenido</li>
+              <li><strong>Cumplimiento legal:</strong> Para cumplir con las leyes aplicables</li>
+            </ul>
+          </section>
 
-1.2 Non-Personal Data
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">5. Compartir Información</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              <strong>No vendemos, alquilamos ni compartimos tu información personal con terceros para fines de marketing.</strong>
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Podemos compartir información únicamente en los siguientes casos:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li><strong>Proveedores de servicios:</strong> Utilizamos servicios de terceros para el envío de emails (como Mailgun) que procesan datos en nuestro nombre bajo estrictos acuerdos de confidencialidad</li>
+              <li><strong>Requerimientos legales:</strong> Si es requerido por ley o para proteger nuestros derechos legales</li>
+            </ul>
+          </section>
 
-We may use web cookies and similar technologies to collect non-personal information such as your IP address, browser type, device information, and browsing patterns. This information helps us to enhance your browsing experience, analyze trends, and improve our services.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">6. Seguridad de los Datos</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Implementamos medidas de seguridad técnicas y organizativas para proteger tu información personal contra acceso no autorizado, pérdida o alteración, incluyendo:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>Encriptación de datos en tránsito (HTTPS/SSL)</li>
+              <li>Almacenamiento seguro en bases de datos protegidas</li>
+              <li>Acceso restringido a datos personales</li>
+              <li>Revisiones periódicas de seguridad</li>
+            </ul>
+          </section>
 
-2. Purpose of Data Collection
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Retención de Datos</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Conservamos tu información personal mientras mantengas una suscripción activa. Si cancelas tu suscripción, eliminaremos o anonimizaremos tus datos dentro de los 30 días siguientes, excepto cuando sea necesario retenerlos por obligaciones legales.
+            </p>
+          </section>
 
-We collect and use your personal data for the sole purpose of order processing. This includes processing your orders, sending order confirmations, providing customer support, and keeping you updated about the status of your orders.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">8. Tus Derechos</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Tienes los siguientes derechos sobre tus datos personales:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li><strong>Acceso:</strong> Solicitar una copia de los datos que tenemos sobre ti</li>
+              <li><strong>Rectificación:</strong> Corregir datos inexactos o incompletos</li>
+              <li><strong>Eliminación:</strong> Solicitar la eliminación de tus datos</li>
+              <li><strong>Cancelación:</strong> Darte de baja del newsletter en cualquier momento</li>
+              <li><strong>Portabilidad:</strong> Recibir tus datos en un formato estructurado</li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Para ejercer cualquiera de estos derechos, contáctanos en la dirección proporcionada al final de esta política.
+            </p>
+          </section>
 
-3. Data Sharing
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">9. Cookies</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Nuestro sitio web utiliza cookies para:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
+              <li>Recordar tus preferencias</li>
+              <li>Analizar el tráfico del sitio web</li>
+              <li>Mejorar la funcionalidad del sitio</li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Puedes configurar tu navegador para rechazar cookies, aunque esto puede afectar algunas funcionalidades del sitio.
+            </p>
+          </section>
 
-We do not share your personal data with any third parties except as required for order processing (e.g., sharing your information with payment processors). We do not sell, trade, or rent your personal information to others.
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">10. Menores de Edad</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Nuestro servicio no está dirigido a menores de 13 años. No recopilamos intencionalmente información de niños. Si eres padre o tutor y crees que tu hijo nos ha proporcionado información personal, contáctanos para que podamos eliminarla.
+            </p>
+          </section>
 
-4. Children's Privacy
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">11. Cambios a esta Política</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Podemos actualizar esta Política de Privacidad ocasionalmente. Te notificaremos sobre cambios significativos a través del newsletter o mediante un aviso en nuestro sitio web. Te recomendamos revisar esta política periódicamente.
+            </p>
+          </section>
 
-ShipFast is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
-
-5. Updates to the Privacy Policy
-
-We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. Any updates will be posted on this page, and we may notify you via email about significant changes.
-
-6. Contact Information
-
-If you have any questions, concerns, or requests related to this Privacy Policy, you can contact us at:
-
-Email: marc@shipfa.st
-
-For all other inquiries, please visit our Contact Us page on the Website.
-
-By using ShipFast, you consent to the terms of this Privacy Policy.`}
-        </pre>
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">12. Contacto</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Si tienes preguntas, comentarios o solicitudes relacionadas con esta Política de Privacidad o el tratamiento de tus datos personales, puedes contactarnos en:
+            </p>
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <p className="text-gray-700 mb-2">
+                <strong>Startup Chihuahua</strong>
+              </p>
+              <p className="text-gray-700 mb-2">
+                Email:{" "}
+                <a
+                  href="mailto:contacto@startupchihuahua.org"
+                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  contacto@startupchihuahua.org
+                </a>
+              </p>
+              <p className="text-gray-700">
+                Sitio web:{" "}
+                <a
+                  href="https://www.startupchihuahua.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  www.startupchihuahua.org
+                </a>
+              </p>
+            </div>
+          </section>
+        </article>
       </div>
     </main>
   );

@@ -19,8 +19,11 @@ export async function GET(req) {
     const userOnly = searchParams.get("userOnly") === "true";
 
     const userEmail = session.user?.email?.toLowerCase();
-    const ADMIN_EMAIL = "roberto24flores@gmail.com"; // Move to config if needed
-    const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+    const ADMIN_EMAILS = [
+      "rflores@startupchihuahua.com",
+      "rflores@startupchihuahua.org",
+    ];
+    const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
     let query = {};
     

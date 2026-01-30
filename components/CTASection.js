@@ -4,7 +4,7 @@ import ButtonLead from "./ButtonLead";
 
 const CTASection = () => {
   return (
-    <section className="py-24 md:py-32 bg-black text-white relative overflow-hidden">
+    <section className="py-24 md:py-32 bg-black text-white relative overflow-hidden z-20">
       {/* Animated gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-black"></div>
       

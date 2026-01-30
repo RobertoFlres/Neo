@@ -1,90 +1,96 @@
 import axios from "axios";
+import { filterByCategory, getCategorySearchQuery } from "./categoryKeywords";
 
 /**
  * Map our category names to News API search parameters
  */
 export const mapCategoryToNewsApi = (category) => {
   const mapping = {
-    "technology": { category: "technology", q: null }, // Use category for tech
-    "business": { category: "business", q: null }, // Use category for business
-    "startups": { category: null, q: "startups" }, // Use keyword search for startups
-    "general": { category: null, q: null },
+    technology: { category: "technology", q: null },
+    business: { category: "business", q: null },
+    startups: { category: null, q: "startup OR startups OR founder OR funding OR venture capital OR unicorn" },
+    general: { category: null, q: null },
   };
   return mapping[category] || { category: null, q: null };
 };
 
 /**
  * Fetches news articles from News API
- * 
+ *
  * @param {string} category - Category to fetch (technology, business, startups, etc.)
- * @param {string} country - Country code (us, mx, ar, etc.)
- * @param {number} pageSize - Number of articles to fetch (default: 10)
+ * @param {number} pageSize - Number of articles to fetch (default: 15)
  * @returns {Promise<Array>} Array of news articles
  */
-export const getNewsArticles = async (category = "technology", country = "us", pageSize = 10) => {
+export const getNewsArticles = async (category = "technology", pageSize = 15) => {
   const apiKey = process.env.NEWS_API_KEY;
 
   if (!apiKey) {
     console.error("⚠️ NEWS_API_KEY not found in environment variables");
-    throw new Error("News API key is not configured");
+    return [];
   }
 
-  // Map category to News API format
   const searchParams = mapCategoryToNewsApi(category);
-  console.log(`📝 Mapping category "${category}" to:`, searchParams);
+  console.log(`📝 News API - category "${category}" mapped to:`, searchParams);
 
   try {
     let articles = [];
 
     // If we have a specific category, use top-headlines
     if (searchParams.category) {
-      const url = `https://newsapi.org/v2/top-headlines`;
-      
-      let params = {
-        category: searchParams.category,
-        country,
-        pageSize,
-      };
+      const url = "https://newsapi.org/v2/top-headlines";
 
-      let response = await axios.get(url, {
-        params,
-        headers: {
-          "X-API-Key": apiKey,
-        },
-      });
+      // Try multiple countries for better coverage
+      const countries = ["us", "mx", "es"];
 
-      articles = response.data.articles || [];
+      for (const country of countries) {
+        try {
+          const response = await axios.get(url, {
+            params: {
+              category: searchParams.category,
+              country,
+              pageSize: Math.ceil(pageSize / countries.length) + 5,
+            },
+            headers: { "X-API-Key": apiKey },
+            timeout: 10000,
+          });
 
-      // Filter and format articles
-      articles = articles
-        .filter((article) => article.title && article.url && article.description)
-        .map((article) => ({
-          title: article.title,
-          description: article.description,
-          url: article.url,
-          source: article.source?.name || "News API",
-          publishedAt: article.publishedAt,
-          image: article.urlToImage,
-        }));
+          const countryArticles = (response.data.articles || [])
+            .filter((article) => article.title && article.url && article.description)
+            .map((article) => ({
+              title: article.title,
+              description: article.description,
+              url: article.url,
+              source: article.source?.name || "News API",
+              publishedAt: article.publishedAt,
+              image: article.urlToImage,
+            }));
 
-      // If no articles with category, try without category
-      if (articles.length === 0) {
-        console.log(`⚠️ No articles with category '${searchParams.category}'. Trying without category...`);
-        
-        params = {
-          country,
-          pageSize,
-        };
+          articles.push(...countryArticles);
+        } catch (err) {
+          console.log(`⚠️ News API: Error fetching ${country}:`, err.message);
+        }
+      }
+    }
 
-        response = await axios.get(url, {
-          params,
-          headers: {
-            "X-API-Key": apiKey,
+    // If we have keywords to search, use everything endpoint
+    if (searchParams.q) {
+      console.log(`🔍 Searching News API with keywords: "${searchParams.q}"`);
+
+      const url = "https://newsapi.org/v2/everything";
+
+      try {
+        const response = await axios.get(url, {
+          params: {
+            q: searchParams.q,
+            sortBy: "publishedAt",
+            language: "en",
+            pageSize: pageSize * 2,
           },
+          headers: { "X-API-Key": apiKey },
+          timeout: 10000,
         });
 
-        articles = response.data.articles || [];
-        articles = articles
+        const searchArticles = (response.data.articles || [])
           .filter((article) => article.title && article.url && article.description)
           .map((article) => ({
             title: article.title,
@@ -94,67 +100,29 @@ export const getNewsArticles = async (category = "technology", country = "us", p
             publishedAt: article.publishedAt,
             image: article.urlToImage,
           }));
+
+        articles.push(...searchArticles);
+      } catch (err) {
+        console.log(`⚠️ News API search error:`, err.message);
       }
     }
-    
-    // If we have keywords to search, use everything endpoint
-    if (searchParams.q) {
-      console.log(`🔍 Searching News API with keywords: "${searchParams.q}"`);
-      
-      const url = `https://newsapi.org/v2/everything`;
-      
-      // Build search query with country context
-      let queryString = searchParams.q;
-      if (country === "mx") {
-        queryString = `${searchParams.q} mexico`;
-      }
-      
-      const params = {
-        q: queryString,
-        sortBy: "publishedAt",
-        pageSize: pageSize * 2, // Get more to filter
-      };
 
-      const response = await axios.get(url, {
-        params,
-        headers: {
-          "X-API-Key": apiKey,
-        },
-      });
+    // Remove duplicates by URL
+    const uniqueArticles = Array.from(
+      new Map(articles.map((a) => [a.url, a])).values()
+    );
 
-      const allArticles = response.data.articles || [];
-      
-      // Filter and format articles
-      articles = allArticles
-        .filter((article) => article.title && article.url && article.description)
-        .map((article) => ({
-          title: article.title,
-          description: article.description,
-          url: article.url,
-          source: article.source?.name || "News API",
-          publishedAt: article.publishedAt,
-          image: article.urlToImage,
-        }))
-        .slice(0, pageSize); // Limit to pageSize
-    }
+    // Apply category filter for additional accuracy
+    const filteredArticles = filterByCategory(uniqueArticles, category, false);
 
-    console.log(`✅ Fetched ${articles.length} articles from News API (${country}, ${category})`);
-    
-    if (articles.length === 0) {
-      console.warn(`⚠️ No articles found for ${country} - ${category}`);
-    }
-    
-    return articles;
+    const result = filteredArticles.slice(0, pageSize);
+
+    console.log(`✅ News API: ${result.length} articles for category "${category}"`);
+
+    return result;
   } catch (error) {
     console.error("❌ Error fetching news:", error.response?.data || error.message);
-    
-    // Return empty array instead of throwing to allow graceful degradation
-    if (error.response?.data?.status === "error") {
-      console.error("News API error:", error.response.data.message);
-      return [];
-    }
-    
-    throw error;
+    return [];
   }
 };
 
@@ -162,12 +130,12 @@ export const getNewsArticles = async (category = "technology", country = "us", p
  * Fetch news with multiple categories
  * Returns articles from multiple sources mixed together
  */
-export const getNewsFromMultipleSources = async (categories = ["technology", "business"], country = "us") => {
+export const getNewsFromMultipleSources = async (categories = ["technology", "business"]) => {
   try {
     const allArticles = [];
-    
+
     for (const category of categories) {
-      const articles = await getNewsArticles(category, country, 5);
+      const articles = await getNewsArticles(category, 5);
       allArticles.push(...articles);
     }
 
@@ -179,4 +147,3 @@ export const getNewsFromMultipleSources = async (categories = ["technology", "bu
     return [];
   }
 };
-

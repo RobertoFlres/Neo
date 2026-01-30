@@ -1,5 +1,6 @@
 import axios from "axios";
 import { JSDOM } from "jsdom";
+import { filterByCategory } from "./categoryKeywords";
 
 /**
  * Scrape articles from Referente.mx
@@ -117,31 +118,24 @@ export const getReferenteArticles = async (limit = 30) => {
 };
 
 /**
- * Get articles filtered by category keywords
+ * Get articles filtered by category using centralized keywords
+ *
+ * @param {string} category - Category to filter (technology, business, startups)
+ * @param {number} limit - Number of articles
+ * @returns {Promise<Array>} Filtered articles
  */
-export const getReferenteNews = async (category = "startups", limit = 10) => {
+export const getReferenteNews = async (category = "technology", limit = 15) => {
   try {
-    // Get all articles
-    const allArticles = await getReferenteArticles(100);
-    
-    // Filter by category keywords
-    const keywords = {
-      technology: ["IA", "inteligencia artificial", "tecnología", "tech", "ChatGPT", "AI", "software", "semiconductores", "digital", "innovación"],
-      business: ["negocios", "empresa", "startup", "emprendedor", "financiamiento", "nearshoring", "inversión", "capital", "manufacturero"],
-      startups: ["startup", "emprendimiento", "unicornio", "financiamiento", "funding", "inversión", "negocio", "invent", "capital", "ecosistema"],
-    };
-    
-    const categoryKeywords = keywords[category] || keywords.technology;
-    
-    const filteredArticles = allArticles.filter((article) => {
-      const title = article.title.toLowerCase();
-      const description = article.description.toLowerCase();
-      return categoryKeywords.some(keyword => 
-        title.includes(keyword.toLowerCase()) || description.includes(keyword.toLowerCase())
-      );
-    });
-    
-    return filteredArticles.slice(0, limit);
+    const articles = await getReferenteArticles(limit * 3);
+
+    // Use centralized category filtering (strict mode)
+    const filteredArticles = filterByCategory(articles, category, true);
+
+    const result = filteredArticles.slice(0, limit);
+
+    console.log(`✅ Referente.mx: ${result.length}/${articles.length} articles matched category "${category}"`);
+
+    return result;
   } catch (error) {
     console.error("❌ Error filtering Referente.mx news:", error.message);
     return [];

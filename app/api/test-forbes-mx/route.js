@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { getReferenteNews } from "@/libs/referente";
+import { getForbesMexicoNews } from "@/libs/forbesMexico";
 
 /**
- * Test endpoint for Referente.mx
- * GET /api/test-referente?category=technology&limit=15
+ * Test endpoint for Forbes México
+ * GET /api/test-forbes-mx?category=business&limit=15
  */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category") || "technology";
+    const category = searchParams.get("category") || "business";
     const limit = parseInt(searchParams.get("limit")) || 15;
 
-    console.log(`📰 Fetching ${limit} articles from Referente.mx (${category})`);
+    console.log(`📰 Fetching ${limit} articles from Forbes México (${category})`);
 
-    const articles = await getReferenteNews(category, limit);
+    const articles = await getForbesMexicoNews(category, limit);
 
     return NextResponse.json({
       success: true,
@@ -24,7 +24,7 @@ export async function GET(req) {
       articles,
     });
   } catch (error) {
-    console.error("❌ Error in test-referente:", error.message);
+    console.error("❌ Error in test-forbes-mx:", error.message);
 
     return NextResponse.json(
       {

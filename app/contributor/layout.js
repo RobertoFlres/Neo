@@ -4,6 +4,7 @@ import { authOptions } from "@/libs/next-auth";
 import connectMongo from "@/libs/mongoose";
 import Contributor from "@/models/Contributor";
 import ContributorLayout from "@/components/contributor/ContributorLayout";
+import config from "@/config";
 
 export const dynamic = "force-dynamic";
 
@@ -16,10 +17,18 @@ export default async function ContributorLayoutWrapper({ children }) {
     redirect("/api/auth/signin?callbackUrl=/contributor");
   }
 
-  // Check if user is admin (admin can also access contributor dashboard)
   const userEmail = session?.user?.email?.toLowerCase();
-  const ADMIN_EMAIL = "roberto24flores@gmail.com";
-  const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+
+  // Check if user is admin
+  const ADMIN_EMAILS = [
+    "rflores@startupchihuahua.com",
+    "rflores@startupchihuahua.org",
+  ];
+  const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
+
+  // Check if user is in the config whitelist
+  const allowedEmails = config.contributors?.allowedEmails || [];
+  const isInWhitelist = allowedEmails.some(email => email.toLowerCase() === userEmail);
 
   // Check if user is a contributor in the database
   await connectMongo();
@@ -27,11 +36,10 @@ export default async function ContributorLayoutWrapper({ children }) {
     email: userEmail,
     isActive: true,
   });
-  
   const isContributor = !!contributor;
 
-  // Allow access if admin or contributor
-  if (!isAdmin && !isContributor) {
+  // Allow access if admin, in whitelist, or contributor in DB
+  if (!isAdmin && !isInWhitelist && !isContributor) {
     console.log("❌ Access denied for:", userEmail);
     redirect("/?error=access_denied");
   }

@@ -7,7 +7,10 @@ import Contributor from "@/models/Contributor";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 
 // Define who can access the admin dashboard
-const ADMIN_EMAIL = "roberto24flores@gmail.com";
+const ADMIN_EMAILS = [
+  "rflores@startupchihuahua.com",
+  "rflores@startupchihuahua.org",
+];
 
 // This is a server-side component to ensure the user is logged in.
 // If not, it will redirect to the login page.
@@ -24,7 +27,7 @@ export default async function LayoutPrivate({ children }) {
 
   // Check if user is admin
   const userEmail = session?.user?.email?.toLowerCase();
-  const isAdmin = userEmail === ADMIN_EMAIL.toLowerCase();
+  const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
   // If not admin, check if user is a contributor and redirect them to /contributor
   if (!isAdmin) {

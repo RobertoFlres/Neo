@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import DashboardActionButtons from "./DashboardActionButtons";
 
 export default function DashboardContent({ initialData, userName }) {
@@ -9,10 +9,9 @@ export default function DashboardContent({ initialData, userName }) {
   const [period, setPeriod] = useState(null);
 
   // Función para calcular fechas según el periodo
-  const getPeriodDates = () => {
+  const getPeriodDates = useCallback(() => {
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     if (!period) return null;
 
     switch (period.value) {
@@ -44,7 +43,7 @@ export default function DashboardContent({ initialData, userName }) {
       default:
         return null;
     }
-  };
+  }, [period]);
 
   // Filtrar actividad reciente
   const filteredActivity = useMemo(() => {
@@ -106,7 +105,7 @@ export default function DashboardContent({ initialData, userName }) {
     }
 
     return activity;
-  }, [filter, period, initialData.formattedActivity]);
+  }, [filter, period, initialData.formattedActivity, getPeriodDates]);
 
   // Calcular estadísticas filtradas
   const filteredStats = useMemo(() => {
@@ -119,7 +118,7 @@ export default function DashboardContent({ initialData, userName }) {
     }
 
     return stats;
-  }, [period, initialData.stats]);
+  }, [period, initialData.stats, getPeriodDates]);
 
   // Get greeting based on time
   const getGreeting = () => {

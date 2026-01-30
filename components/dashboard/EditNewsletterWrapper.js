@@ -9,7 +9,6 @@ import { NewsletterPreviewModal } from "./NewsletterPreviewModal";
 export function EditNewsletterWrapper({ newsletter }) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
 
   // Insert buttons into header
@@ -84,8 +83,7 @@ export function EditNewsletterWrapper({ newsletter }) {
       </div>
 
       {/* Newsletter Content */}
-      <EditableNewsletter 
-        key={refreshKey}
+      <EditableNewsletter
         newsletter={newsletter}
         editing={editing}
         setEditing={setEditing}

@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">1. Introducción</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              En {config.appName} ("nosotros", "nuestro"), operado por Startup Chihuahua, nos comprometemos a proteger tu privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestro servicio de newsletter.
+              En {config.appName} (&quot;nosotros&quot;, &quot;nuestro&quot;), operado por Startup Chihuahua, nos comprometemos a proteger tu privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestro servicio de newsletter.
             </p>
             <p className="text-gray-700 leading-relaxed mb-4">
               Al suscribirte a nuestro newsletter, aceptas las prácticas descritas en esta política.

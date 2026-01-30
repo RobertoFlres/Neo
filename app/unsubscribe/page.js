@@ -1,21 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 
-export default function UnsubscribePage() {
+function UnsubscribeForm() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const searchParams = useSearchParams();
-  
+
   // Get email from URL params if available
   const emailFromUrl = searchParams.get('email');
 
+  useEffect(() => {
+    if (emailFromUrl) {
+      setEmail(emailFromUrl);
+    }
+  }, [emailFromUrl]);
+
   const handleUnsubscribe = async (e) => {
     e.preventDefault();
-    
+
     if (!email) {
       toast.error('Por favor ingresa tu email');
       return;
@@ -97,7 +103,7 @@ export default function UnsubscribePage() {
             Ingresa tu email para darte de baja de nuestro newsletter
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleUnsubscribe}>
           <div>
             <label htmlFor="email" className="sr-only">
@@ -111,9 +117,8 @@ export default function UnsubscribePage() {
               required
               className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-[#2b3e81] focus:border-[#2b3e81] focus:z-10 sm:text-sm"
               placeholder="tu@email.com"
-              value={emailFromUrl || email}
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={!!emailFromUrl}
             />
           </div>
 
@@ -148,5 +153,24 @@ export default function UnsubscribePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 text-center">
+        <div className="animate-spin mx-auto h-12 w-12 border-4 border-[#2b3e81] border-t-transparent rounded-full"></div>
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function UnsubscribePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <UnsubscribeForm />
+    </Suspense>
   );
 }

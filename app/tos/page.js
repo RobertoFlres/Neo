@@ -101,7 +101,7 @@ const TOS = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">7. Limitación de Responsabilidad</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              {config.appName} se proporciona "tal cual" sin garantías de ningún tipo. No nos hacemos responsables de:
+              {config.appName} se proporciona &quot;tal cual&quot; sin garantías de ningún tipo. No nos hacemos responsables de:
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2 mb-4">
               <li>Decisiones tomadas basadas en la información proporcionada</li>

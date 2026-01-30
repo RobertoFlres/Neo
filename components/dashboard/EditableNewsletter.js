@@ -20,9 +20,6 @@ export function EditableNewsletter({ newsletter, onUpdate, editing, setEditing, 
   const [title, setTitle] = useState(newsletter.title || "");
   const [summary, setSummary] = useState(newsletter.content?.summary || "");
   const [articles, setArticles] = useState(newsletter.content?.articles || []);
-  
-  // Preserve the newsletter ID
-  const newsletterId = newsletter._id || newsletter.id;
 
   const prevNewsletterRef = useRef(null);
   

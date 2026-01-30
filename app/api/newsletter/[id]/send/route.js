@@ -68,19 +68,19 @@ export async function POST(req, context) {
       try {
         console.log(`📧 [${i + 1}/${subscribers.length}] Processing ${subscriber.email}...`);
         
+        // Construir URL de unsubscribe
+        const unsubscribeUrl = `https://${config.domainName}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`;
+
         // Generate personalized HTML with unsubscribe link
         const personalizedHTML = htmlContent.replace(
-          'UNSUBSCRIBE_TOKEN',
-          `${config.domainName}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`
-        );
-        
-        const personalizedText = textContent.replace(
-          'UNSUBSCRIBE_TOKEN',
-          `${config.domainName}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`
+          'UNSUBSCRIBE_URL',
+          unsubscribeUrl
         );
 
-        // Construir URL de unsubscribe
-        const unsubscribeUrl = `https://${config.domainName.replace(/^www\./, '')}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`;
+        const personalizedText = textContent.replace(
+          'UNSUBSCRIBE_URL',
+          unsubscribeUrl
+        );
 
         await sendEmail({
           to: subscriber.email,
@@ -451,7 +451,7 @@ function generateNewsletterHTML(newsletter) {
           
           <!-- Unsubscribe -->
           <div class="unsubscribe">
-            <a href="${config.domainName}/unsubscribe?token=UNSUBSCRIBE_TOKEN" style="color: rgba(255, 255, 255, 0.9); text-decoration: underline; font-size: 12px;">Darse de baja</a>
+            <a href="UNSUBSCRIBE_URL" style="color: rgba(255, 255, 255, 0.9); text-decoration: underline; font-size: 12px;">Darse de baja</a>
           </div>
         </div>
       </div>
@@ -491,7 +491,7 @@ function generateNewsletterText(newsletter) {
   text += `\n---\n`;
   text += `${config.appName} | Un boletín de noticias para emprendedores\n`;
   text += `Recibiste este email porque te suscribiste a nuestro newsletter\n`;
-  text += `Darse de baja: ${config.domainName}/unsubscribe`;
-  
+  text += `Darse de baja: UNSUBSCRIBE_URL`;
+
   return text;
 }

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Lead from "@/models/Lead";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/subscribers
  * Add a new subscriber to the newsletter
@@ -66,19 +68,26 @@ export async function POST(req) {
 
 /**
  * GET /api/subscribers
- * Get all active subscribers
+ * Get subscribers. Use ?all=true to include inactive subscribers
  */
 export async function GET(req) {
   await connectMongo();
 
   try {
-    const subscribers = await Lead.find({ isActive: true });
-    
+    const { searchParams } = new URL(req.url);
+    const showAll = searchParams.get('all') === 'true';
+
+    const query = showAll ? {} : { isActive: true };
+    const subscribers = await Lead.find(query);
+
     return NextResponse.json({
       success: true,
       count: subscribers.length,
+      activeCount: subscribers.filter(s => s.isActive).length,
+      inactiveCount: subscribers.filter(s => !s.isActive).length,
       subscribers: subscribers.map(sub => ({
         email: sub.email,
+        isActive: sub.isActive,
         source: sub.source,
         createdAt: sub.createdAt,
       })),

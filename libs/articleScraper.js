@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JSDOM } from "jsdom";
+import cheerio from "cheerio";
 
 /**
  * Scrape article content from URL
@@ -21,8 +21,7 @@ export const scrapeArticle = async (url) => {
       timeout: 15000,
     });
 
-    const dom = new JSDOM(response.data);
-    const document = dom.window.document;
+    const $ = cheerio.load(response.data);
 
     // Try to find the main image
     let mainImage = null;
@@ -37,9 +36,9 @@ export const scrapeArticle = async (url) => {
     ];
 
     for (const selector of imageSelectors) {
-      const imgElement = document.querySelector(selector);
-      if (imgElement) {
-        mainImage = imgElement.getAttribute("content") || imgElement.getAttribute("src");
+      const imgElement = $(selector).first();
+      if (imgElement.length) {
+        mainImage = imgElement.attr("content") || imgElement.attr("src");
         if (mainImage && mainImage.startsWith("http")) {
           break;
         }
@@ -47,13 +46,10 @@ export const scrapeArticle = async (url) => {
     }
 
     // Remove unwanted elements
-    const unwantedSelectors = [
-      "script", "style", "nav", "header", "footer", "aside",
-      ".advertisement", ".ads", "[class*='ad-']", "[id*='ad-']",
-      ".social-share", ".comments", ".related-posts", ".newsletter-signup",
-      ".sidebar", ".menu", ".navigation", "form", "iframe",
-    ].join(", ");
-    document.querySelectorAll(unwantedSelectors).forEach((el) => el.remove());
+    $("script, style, nav, header, footer, aside").remove();
+    $(".advertisement, .ads, [class*='ad-'], [id*='ad-']").remove();
+    $(".social-share, .comments, .related-posts, .newsletter-signup").remove();
+    $(".sidebar, .menu, .navigation, form, iframe").remove();
 
     // Try to find main content
     let contentElement = null;
@@ -71,23 +67,21 @@ export const scrapeArticle = async (url) => {
     ];
 
     for (const selector of contentSelectors) {
-      const element = document.querySelector(selector);
-      if (element && element.textContent.trim().length > 200) {
+      const element = $(selector);
+      if (element.length && element.text().trim().length > 200) {
         contentElement = element;
         break;
       }
     }
 
     if (!contentElement) {
-      contentElement = document.body;
+      contentElement = $("body");
     }
 
     // Extract paragraphs
     const paragraphs = [];
-    const pElements = contentElement.querySelectorAll("p");
-
-    pElements.forEach((p) => {
-      let text = p.textContent.trim();
+    contentElement.find("p").each((_, p) => {
+      let text = $(p).text().trim();
       // Clean up whitespace
       text = text.replace(/\s+/g, " ").trim();
 
@@ -99,7 +93,7 @@ export const scrapeArticle = async (url) => {
 
     // If no paragraphs found, try to split by sentences
     if (paragraphs.length === 0) {
-      const fullText = contentElement.textContent.trim();
+      const fullText = contentElement.text().trim();
       const sentences = fullText.split(/(?<=[.!?])\s+/);
       let currentParagraph = "";
 

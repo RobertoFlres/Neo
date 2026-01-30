@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JSDOM } from "jsdom";
+import cheerio from "cheerio";
 import { filterByCategory } from "./categoryKeywords";
 
 /**
@@ -24,17 +24,14 @@ export const getNoroArticles = async (section = "tecnologia", limit = 20) => {
       timeout: 15000,
     });
 
-    const dom = new JSDOM(response.data);
-    const document = dom.window.document;
+    const $ = cheerio.load(response.data);
 
     const articles = [];
 
     // Get all links from the page
-    const allLinks = document.querySelectorAll("a[href]");
-
-    allLinks.forEach((element) => {
+    $("a[href]").each((_, element) => {
       try {
-        const link = element.href || element.getAttribute("href");
+        const link = $(element).attr("href");
 
         // Filter for section links (tecnologia or negocios)
         if (
@@ -43,11 +40,11 @@ export const getNoroArticles = async (section = "tecnologia", limit = 20) => {
             link.includes("/tecnologia/") ||
             link.includes("/negocios/"))
         ) {
-          const titleElement = element.querySelector("h2, h3, h4, p") || element;
+          const titleElement = $(element).find("h2, h3, h4, p").first();
           let title =
-            titleElement.textContent?.trim() ||
-            element.getAttribute("title") ||
-            element.textContent?.trim() ||
+            titleElement.text()?.trim() ||
+            $(element).attr("title") ||
+            $(element).text()?.trim() ||
             "";
 
           // Clean up title

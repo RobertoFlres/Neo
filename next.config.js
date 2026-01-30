@@ -9,9 +9,6 @@ const nextConfig = {
       "logos-world.net",
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ["jsdom"],
-  },
 };
 
 module.exports = nextConfig;

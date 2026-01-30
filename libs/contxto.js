@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JSDOM } from "jsdom";
+import cheerio from "cheerio";
 import { filterByCategory } from "./categoryKeywords";
 
 /**
@@ -34,15 +34,12 @@ export const getContxtoArticles = async (limit = 30) => {
           timeout: 15000,
         });
 
-        const dom = new JSDOM(response.data);
-        const document = dom.window.document;
+        const $ = cheerio.load(response.data);
 
         // Get all article links
-        const allLinks = document.querySelectorAll("a[href]");
-
-        allLinks.forEach((element) => {
+        $("a[href]").each((_, element) => {
           try {
-            const link = element.href || element.getAttribute("href");
+            const link = $(element).attr("href");
 
             // Filter for article links (exclude category pages, authors, etc.)
             if (
@@ -62,11 +59,11 @@ export const getContxtoArticles = async (limit = 30) => {
               const isArticle = /\/\d{4}\/|\/[a-z0-9-]{10,}/.test(link);
 
               if (isArticle) {
-                const titleElement = element.querySelector("h2, h3, h4") || element;
+                const titleElement = $(element).find("h2, h3, h4").first();
                 let title =
-                  titleElement.textContent?.trim() ||
-                  element.getAttribute("title") ||
-                  element.textContent?.trim() ||
+                  titleElement.text()?.trim() ||
+                  $(element).attr("title") ||
+                  $(element).text()?.trim() ||
                   "";
 
                 // Clean up title
@@ -74,9 +71,9 @@ export const getContxtoArticles = async (limit = 30) => {
 
                 // Get description if available
                 let description = "";
-                const descElement = element.closest("article")?.querySelector("p, .excerpt");
-                if (descElement) {
-                  description = descElement.textContent?.trim() || "";
+                const descElement = $(element).closest("article").find("p, .excerpt").first();
+                if (descElement.length) {
+                  description = descElement.text()?.trim() || "";
                 }
 
                 if (title.length > 15 && title.length < 300) {

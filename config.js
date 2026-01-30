@@ -7,7 +7,8 @@ const config = {
   appDescription:
     "Recibe un resumen diario de las noticias de startups, tecnología y emprendimiento. Newsletter gratuito para profesionales.",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
-  domainName: "neo-eight-self.vercel.app", // Dominio principal de la aplicación
+  domainName: "startupchihuahua.org", // Dominio para emails (debe estar verificado en Resend)
+  appUrl: "neo-eight-self.vercel.app", // URL de la aplicación en Vercel (para links)
   crisp: {
     // Crisp website ID. IF YOU DON'T USE CRISP: just remove this => Then add a support email in this config file (mailgun.supportEmail) otherwise customer support won't work.
     id: "",

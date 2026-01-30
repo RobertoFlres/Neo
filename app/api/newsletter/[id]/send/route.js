@@ -68,8 +68,9 @@ export async function POST(req, context) {
       try {
         console.log(`📧 [${i + 1}/${subscribers.length}] Processing ${subscriber.email}...`);
         
-        // Construir URL de unsubscribe
-        const unsubscribeUrl = `https://${config.domainName}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`;
+        // Construir URL de unsubscribe (usar appUrl para la URL de la aplicación)
+        const appDomain = config.appUrl || config.domainName;
+        const unsubscribeUrl = `https://${appDomain}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`;
 
         // Generate personalized HTML with unsubscribe link
         const personalizedHTML = htmlContent.replace(

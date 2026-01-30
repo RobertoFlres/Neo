@@ -27,8 +27,8 @@ const getResendFromEmail = () => {
 
 export const sendEmail = async ({ to, subject, text, html, replyTo, unsubscribeUrl }) => {
   try {
-    // Agregar delay para evitar rate limit (100ms entre emails)
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Agregar delay para evitar rate limit (600ms entre emails - Resend permite 2 req/seg)
+    await new Promise(resolve => setTimeout(resolve, 600));
     
     const fromEmail = getResendFromEmail();
     const domainFromConfig = config.domainName?.replace(/^www\./, '') || 'startupchihuahua.org';

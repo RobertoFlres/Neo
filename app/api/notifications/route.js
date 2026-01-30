@@ -64,6 +64,26 @@ export async function GET() {
       });
     });
 
+    // Obtener desuscripciones recientes (últimas 24 horas)
+    const recentUnsubscribes = await Lead.find({
+      isActive: false,
+      unsubscribedAt: { $gte: yesterday },
+    })
+      .select("email unsubscribedAt")
+      .sort({ unsubscribedAt: -1 })
+      .limit(10);
+
+    recentUnsubscribes.forEach((subscriber) => {
+      notifications.push({
+        id: `unsubscribe-${subscriber._id}`,
+        type: "unsubscribe",
+        title: "Usuario desuscrito",
+        message: `${subscriber.email} se ha dado de baja`,
+        date: subscriber.unsubscribedAt,
+        link: "/dashboard/subscribers",
+      });
+    });
+
     // Ordenar por fecha (más recientes primero)
     notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
 

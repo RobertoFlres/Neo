@@ -18,6 +18,10 @@ const leadSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    unsubscribedAt: {
+      type: Date,
+      default: null,
+    },
     source: {
       type: String,
       default: "landing_page",

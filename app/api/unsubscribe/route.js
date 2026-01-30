@@ -33,9 +33,10 @@ export async function GET(req) {
       );
     }
 
-    // Deactivate the subscriber
+    // Deactivate the subscriber and record unsubscribe date
     await Lead.findByIdAndUpdate(subscriber._id, {
       isActive: false,
+      unsubscribedAt: new Date(),
     });
 
     console.log(`✅ Unsubscribed: ${email}`);
@@ -73,7 +74,7 @@ export async function POST(req) {
 
     // Find the subscriber
     const subscriber = await Lead.findOne({ email: email.toLowerCase() });
-    
+
     if (!subscriber) {
       return NextResponse.json(
         { error: "Subscriber not found" },
@@ -81,9 +82,10 @@ export async function POST(req) {
       );
     }
 
-    // Deactivate the subscriber
+    // Deactivate the subscriber and record unsubscribe date
     await Lead.findByIdAndUpdate(subscriber._id, {
       isActive: false,
+      unsubscribedAt: new Date(),
     });
 
     console.log(`✅ Unsubscribed: ${email}`);

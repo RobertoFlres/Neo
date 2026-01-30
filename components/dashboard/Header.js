@@ -65,12 +65,21 @@ const DashboardHeader = ({ onMenuClick }) => {
     const newReadSet = new Set(readNotifications);
     newReadSet.add(notificationId);
     setReadNotifications(newReadSet);
-    
+
     // Guardar en localStorage
     localStorage.setItem("readNotifications", JSON.stringify(Array.from(newReadSet)));
-    
+
     // Actualizar contador
     setUnreadCount((prev) => Math.max(0, prev - 1));
+  };
+
+  // Marcar todas como leídas
+  const markAllAsRead = () => {
+    const newReadSet = new Set(readNotifications);
+    notifications.forEach((notif) => newReadSet.add(notif.id));
+    setReadNotifications(newReadSet);
+    localStorage.setItem("readNotifications", JSON.stringify(Array.from(newReadSet)));
+    setUnreadCount(0);
   };
 
   // Cerrar dropdowns al hacer click fuera
@@ -170,11 +179,21 @@ const DashboardHeader = ({ onMenuClick }) => {
               <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-96 overflow-hidden flex flex-col">
                 <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                   <h3 className="font-semibold text-gray-800">Notificaciones</h3>
-                  {unreadCount > 0 && (
-                    <span className="text-xs bg-[#4d6fff] text-white px-2 py-1 rounded-full">
-                      {unreadCount} nueva{unreadCount !== 1 ? "s" : ""}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {unreadCount > 0 && (
+                      <>
+                        <button
+                          onClick={markAllAsRead}
+                          className="text-xs text-[#4d6fff] hover:text-[#2b3e81] font-medium"
+                        >
+                          Marcar leídas
+                        </button>
+                        <span className="text-xs bg-[#4d6fff] text-white px-2 py-1 rounded-full">
+                          {unreadCount}
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
                 <div className="overflow-y-auto">
                   {notifications.length > 0 ? (
@@ -198,7 +217,8 @@ const DashboardHeader = ({ onMenuClick }) => {
                             <div className="flex items-start gap-3">
                               {!isRead && (
                                 <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                                  notification.type === "article" ? "bg-blue-500" : "bg-green-500"
+                                  notification.type === "article" ? "bg-blue-500" :
+                                  notification.type === "unsubscribe" ? "bg-red-500" : "bg-green-500"
                                 }`}></div>
                               )}
                               {isRead && (

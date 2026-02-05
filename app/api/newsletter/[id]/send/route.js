@@ -1,22 +1,28 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import connectMongo from "@/libs/mongoose";
 import Newsletter from "@/models/Newsletter";
 import Lead from "@/models/Lead";
+import Group from "@/models/Group";
 import { sendEmail } from "@/libs/resend";
 import config from "@/config";
 
 /**
  * POST /api/newsletter/[id]/send
- * Sends a newsletter to all active subscribers
+ * Sends a newsletter to all active subscribers or a specific group
  */
 export async function POST(req, context) {
   await connectMongo();
 
   try {
     const { id } = context.params;
-    
-    console.log("📧 Newsletter send request for ID:", id);
-    
+
+    // Get group filter from query params
+    const { searchParams } = new URL(req.url);
+    const groupId = searchParams.get('group');
+
+    console.log("📧 Newsletter send request for ID:", id, "Group:", groupId || "all");
+
     // Validate ID
     if (!id || id === 'undefined') {
       console.error("❌ Invalid newsletter ID:", id);
@@ -25,7 +31,7 @@ export async function POST(req, context) {
         { status: 400 }
       );
     }
-    
+
     // Get the newsletter
     const newsletter = await Newsletter.findById(id);
     if (!newsletter) {
@@ -35,16 +41,26 @@ export async function POST(req, context) {
         { status: 404 }
       );
     }
-    
+
     console.log("✅ Newsletter found:", newsletter.title);
 
     // Permitir reenvío de newsletters ya enviados
     // Si ya fue enviado, incrementaremos el contador de envíos
     const isResend = newsletter.status === "sent";
 
-    // Get all active subscribers
-    const subscribers = await Lead.find({ isActive: true });
-    console.log(`📧 Found ${subscribers.length} active subscribers`);
+    // Build query for subscribers
+    const subscriberQuery = { isActive: true };
+
+    // If group filter specified, add to query
+    if (groupId && mongoose.Types.ObjectId.isValid(groupId)) {
+      subscriberQuery.groups = new mongoose.Types.ObjectId(groupId);
+      const group = await Group.findById(groupId);
+      console.log(`📧 Filtering by group: ${group?.name || groupId}`);
+    }
+
+    // Get subscribers (filtered by group if specified)
+    const subscribers = await Lead.find(subscriberQuery);
+    console.log(`📧 Found ${subscribers.length} active subscribers${groupId ? ' in group' : ''}`);
 
     if (subscribers.length === 0) {
       return NextResponse.json(

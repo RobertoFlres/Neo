@@ -8,7 +8,26 @@ export default function NewsletterActions({ newsletter }) {
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isResend, setIsResend] = useState(false);
+  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(''); // '' means all subscribers
   const router = useRouter();
+
+  // Fetch groups on mount
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
+  const fetchGroups = async () => {
+    try {
+      const response = await fetch('/api/groups');
+      const data = await response.json();
+      if (data.success) {
+        setGroups(data.groups);
+      }
+    } catch (error) {
+      console.error('Error fetching groups:', error);
+    }
+  };
 
   // Debug: Log newsletter data when component renders
   useEffect(() => {
@@ -22,6 +41,7 @@ export default function NewsletterActions({ newsletter }) {
 
   const handleSendClick = (resend = false) => {
     setIsResend(resend);
+    setSelectedGroup(''); // Reset selection when opening modal
     setShowConfirmModal(true);
   };
 
@@ -31,7 +51,7 @@ export default function NewsletterActions({ newsletter }) {
     console.log("🔄 Starting send/resend process...");
 
     const newsletterId = newsletter._id || newsletter.id;
-    
+
     if (!newsletterId) {
       toast.error("Error: No se pudo obtener el ID del newsletter");
       console.error("❌ Newsletter ID is undefined:", newsletter);
@@ -40,8 +60,10 @@ export default function NewsletterActions({ newsletter }) {
     }
 
     try {
-      console.log(`📧 ${isResend ? 'Resending' : 'Sending'} newsletter with ID: ${newsletterId}`);
-      const response = await fetch(`/api/newsletter/${newsletterId}/send`, {
+      const groupParam = selectedGroup ? `?group=${selectedGroup}` : '';
+      console.log(`📧 ${isResend ? 'Resending' : 'Sending'} newsletter with ID: ${newsletterId}, group: ${selectedGroup || 'all'}`);
+
+      const response = await fetch(`/api/newsletter/${newsletterId}/send${groupParam}`, {
         method: "POST",
       });
 
@@ -51,14 +73,15 @@ export default function NewsletterActions({ newsletter }) {
       console.log("📥 Response data:", data);
 
       if (data.success) {
+        const groupName = selectedGroup ? groups.find(g => g.id === selectedGroup)?.name : 'todos los suscriptores';
         const message = isResend
-          ? `Newsletter reenviado a ${data.newSentCount} suscriptores (Total: ${data.sentCount})`
-          : `Newsletter enviado a ${data.sentCount} suscriptores`;
+          ? `Newsletter reenviado a ${data.newSentCount} de ${groupName} (Total: ${data.sentCount})`
+          : `Newsletter enviado a ${data.sentCount} suscriptores de ${groupName}`;
         toast.success(message);
-        
+
         // Resetear el estado de loading antes de refrescar
         setLoading(false);
-        
+
         // Recargar la página después de un pequeño delay para que el usuario vea el mensaje de éxito
         setTimeout(() => {
           router.refresh();
@@ -201,23 +224,55 @@ export default function NewsletterActions({ newsletter }) {
       {/* Modal de confirmación de envío/reenvío */}
       {showConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div 
-            className="fixed inset-0 bg-black/50" 
+          <div
+            className="fixed inset-0 bg-black/50"
             onClick={handleCancelSend}
           ></div>
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative z-10">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
               {isResend ? "¿Reenviar Newsletter?" : "¿Enviar Newsletter?"}
             </h3>
+
+            {/* Group selector */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enviar a:
+              </label>
+              <select
+                value={selectedGroup}
+                onChange={(e) => setSelectedGroup(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2b3e81] focus:border-transparent"
+              >
+                <option value="">Todos los suscriptores</option>
+                {groups.map((group) => (
+                  <option key={group.id} value={group.id}>
+                    {group.name} ({group.subscriberCount} suscriptores)
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <p className="text-gray-600 mb-6">
               {isResend ? (
                 <>
-                  ¿Estás seguro de que quieres <strong className="text-gray-800">REENVIAR</strong> este newsletter a todos los suscriptores?
+                  ¿Estás seguro de que quieres <strong className="text-gray-800">REENVIAR</strong> este newsletter
+                  {selectedGroup ? (
+                    <> al grupo <strong className="text-gray-800">{groups.find(g => g.id === selectedGroup)?.name}</strong></>
+                  ) : (
+                    <> a <strong className="text-gray-800">todos los suscriptores</strong></>
+                  )}?
                   <br /><br />
                   Este newsletter ya fue enviado <strong className="text-gray-800">{newsletter.sentCount || 0} vez{newsletter.sentCount !== 1 ? "(ces)" : ""}</strong>.
                 </>
               ) : (
-                <>¿Estás seguro de que quieres enviar este newsletter a todos los suscriptores?</>
+                <>
+                  ¿Estás seguro de que quieres enviar este newsletter
+                  {selectedGroup ? (
+                    <> al grupo <strong className="text-gray-800">{groups.find(g => g.id === selectedGroup)?.name}</strong></>
+                  ) : (
+                    <> a <strong className="text-gray-800">todos los suscriptores</strong></>
+                  )}?
+                </>
               )}
             </p>
             <div className="flex items-center justify-end gap-3">
@@ -231,7 +286,7 @@ export default function NewsletterActions({ newsletter }) {
               <button
                 onClick={handleConfirmSend}
                 className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${
-                  isResend 
+                  isResend
                     ? "bg-gradient-to-br from-[#2b3e81] to-[#4d6fff] hover:shadow-lg"
                     : "bg-gradient-to-br from-green-600 to-green-700 hover:shadow-lg"
                 }`}

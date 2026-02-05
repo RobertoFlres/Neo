@@ -26,6 +26,10 @@ const leadSchema = mongoose.Schema(
       type: String,
       default: "landing_page",
     },
+    groups: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group",
+    }],
     metadata: {
       country: String,
       unsubscribeToken: String, // For unsubscribe links

@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 const ADMIN_EMAILS = [
   "rflores@startupchihuahua.com",
   "rflores@startupchihuahua.org",
+  "mblanco@startupchihuahua.org",
 ];
 
 export default async function SuggestionsPage() {

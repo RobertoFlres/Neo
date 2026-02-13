@@ -8,6 +8,7 @@ import Contributor from "@/models/Contributor";
 const ADMIN_EMAILS = [
   "rflores@startupchihuahua.com",
   "rflores@startupchihuahua.org",
+  "mblanco@startupchihuahua.org",
 ];
 
 /**

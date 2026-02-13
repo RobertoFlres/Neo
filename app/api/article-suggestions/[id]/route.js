@@ -7,6 +7,7 @@ import ArticleSuggestion from "@/models/ArticleSuggestion";
 const ADMIN_EMAILS = [
   "rflores@startupchihuahua.com",
   "rflores@startupchihuahua.org",
+  "mblanco@startupchihuahua.org",
 ];
 
 // GET - Get a single suggestion

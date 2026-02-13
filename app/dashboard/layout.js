@@ -10,6 +10,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 const ADMIN_EMAILS = [
   "rflores@startupchihuahua.com",
   "rflores@startupchihuahua.org",
+  "mblanco@startupchihuahua.org",
 ];
 
 // This is a server-side component to ensure the user is logged in.

@@ -22,6 +22,7 @@ export async function GET(req) {
     const ADMIN_EMAILS = [
       "rflores@startupchihuahua.com",
       "rflores@startupchihuahua.org",
+      "mblanco@startupchihuahua.org",
     ];
     const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 

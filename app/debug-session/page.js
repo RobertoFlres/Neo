@@ -12,6 +12,7 @@ export default async function DebugSession() {
   const ADMIN_EMAILS = [
     "rflores@startupchihuahua.com",
     "rflores@startupchihuahua.org",
+    "mblanco@startupchihuahua.org",
   ];
   const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmailLower);
   const allowedEmails = config.contributors?.allowedEmails || [];

@@ -1,7 +1,7 @@
 import config from "@/config";
 
 export const sendEmail = async ({ to, subject, text, html, replyTo, unsubscribeUrl }) => {
-  const token = config.zeptomail.token;
+  const token = config.zeptomail.token?.trim();
 
   if (!token) {
     console.warn("ZEPTOMAIL_TOKEN is not configured. Emails will not be sent.");
@@ -9,9 +9,10 @@ export const sendEmail = async ({ to, subject, text, html, replyTo, unsubscribeU
   }
 
   try {
-    const fullToken = token.startsWith("Zoho-enczapikey")
-      ? token
-      : `Zoho-enczapikey ${token}`;
+    const cleanToken = token.replace(/\s+/g, "");
+    const fullToken = cleanToken.startsWith("Zoho-enczapikey")
+      ? cleanToken
+      : `Zoho-enczapikey ${cleanToken}`;
 
     const toAddresses = Array.isArray(to)
       ? to.map((address) => ({ email_address: { address, name: address } }))

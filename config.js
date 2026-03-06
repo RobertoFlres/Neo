@@ -107,6 +107,11 @@ const config = {
       "rflores@startupchihuahua.org",
     ],
   },
+  zeptomail: {
+    token: process.env.ZEPTOMAIL_TOKEN || "",
+    fromAddress: process.env.EMAIL_FROM_ADDRESS || "noreply@startupchihuahua.org",
+    fromName: process.env.EMAIL_FROM_NAME || "neo",
+  },
   // Redes sociales para el footer del email
   social: {
     instagram: "https://instagram.com/startupchihuahua",

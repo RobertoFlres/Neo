@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { sendEmail } from "@/libs/mailgun";
+import { sendEmail } from "@/libs/zeptomail";
 import config from "@/config";
 
 export async function POST(req) {

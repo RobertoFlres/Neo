@@ -4,7 +4,7 @@ import connectMongo from "@/libs/mongoose";
 import Newsletter from "@/models/Newsletter";
 import Lead from "@/models/Lead";
 import Group from "@/models/Group";
-import { sendEmail } from "@/libs/resend";
+import { sendEmail } from "@/libs/zeptomail";
 import config from "@/config";
 
 /**

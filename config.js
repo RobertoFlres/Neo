@@ -105,6 +105,7 @@ const config = {
       "roberto.flores.esp@gmail.com",
       "rflores@startupchihuahua.com",
       "rflores@startupchihuahua.org",
+      "mblanco@startupchihuahua.org",
     ],
   },
   zeptomail: {

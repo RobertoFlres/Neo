@@ -24,6 +24,7 @@ export default async function ContributorLayoutWrapper({ children }) {
     "rflores@startupchihuahua.com",
     "rflores@startupchihuahua.org",
     "mblanco@startupchihuahua.org",
+    "jparra@startupchihuahua.org",
   ];
   const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 

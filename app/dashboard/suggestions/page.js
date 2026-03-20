@@ -11,6 +11,7 @@ const ADMIN_EMAILS = [
   "rflores@startupchihuahua.com",
   "rflores@startupchihuahua.org",
   "mblanco@startupchihuahua.org",
+  "jparra@startupchihuahua.org",
 ];
 
 export default async function SuggestionsPage() {
